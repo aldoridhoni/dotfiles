@@ -1,0 +1,5 @@
+bind -t vi-copy y copy-pipe "xclip -selection clipboard"
+
+tm_session_name="#[fg=colour28,bg=colour226,bold]😏 #S #[bg=default,fg=colour226]"
+set -g status-left $tm_session_name' '
+run "~/.tmux/tmux-scroll-copy-mode/scroll_copy_mode.tmux"
