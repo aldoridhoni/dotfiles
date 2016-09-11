@@ -23,7 +23,8 @@ call vundle#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 " Plugin 'Valloric/YouCompleteMe'
@@ -60,7 +61,7 @@ nmap <leader>q :q<cr>
 nmap <leader>x :x<cr>
 
 " Vim-airline
-let g:airline_theme='bubblegum'
+let g:airline_theme='wombat'
 let g:airline_powerline_fonts = 1
 set tabstop=4
 set shiftwidth=4
@@ -119,13 +120,18 @@ if has("gui_macvim")
 endif
 
 if has("macunix")
-    map <leader>] :bn<cr>
-    map <leader>[ :bp<cr>
+    " GVim
+    vmap <C-c> "+yi
+    vmap <C-x> "+c
+    vmap <C-v> c<ESC>"+p
+    imap <C-v> <C-r><C-o>+
+    set clipboard^=unnamedplus
 endif
 
 if has("unix")
     set background=dark
     color Tomorrow-Night-Eighties
 endif
+
 
 set showcmd
