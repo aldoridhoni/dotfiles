@@ -1,0 +1,29 @@
+"*":
+  core:
+    autoHideMenuBar: true
+    disabledPackages: [
+      "latex-plus"
+      "spell-check"
+      "release-notes"
+      "timecop"
+      "welcome"
+      "metrics"
+      "linter-chktex"
+    ]
+    themes: [
+      "one-dark-ui"
+      "base16-tomorrow-dark-theme"
+    ]
+  editor:
+    invisibles: {}
+    scrollPastEnd: true
+    showInvisibles: true
+  "latex-plus": {}
+  linter:
+    errorPanelHeight: 26
+    showErrorPanel: false
+  "linter-chktex": {}
+  "vim-mode":
+    startInInsertMode: true
+  welcome:
+    showOnStartup: false
