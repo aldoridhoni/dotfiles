@@ -8,7 +8,7 @@ You should not put any user code in this function besides modifying the variable
 values."
   (setq-default
    ;; Base distribution to use. This is a layer contained in the directory
-   ;; `+distribution'. For now available distributions are `spacemacs-base'
+   ;; `+distribution'. For now available distributions are `spacemhttp://gihttp://github.com/milkypostman/powerline/thub.com/milkypostman/powerline/acs-base'
    ;; or `spacemacs'. acs
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
@@ -39,6 +39,7 @@ values."
      php
      django
      yaml
+     evil-commentary
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -255,6 +256,11 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place you code here."
+  (setq powerline-default-separator 'utf-8)
+  (spacemacs|do-after-display-system-init
+   ;; This sets separator for GUI.
+   (setq powerline-default-separator 'slant))
+  (spaceline-compile)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -272,6 +278,9 @@ you should place you code here."
  '(doc-view-image-width 850)
  '(global-auto-revert-mode t)
  '(global-linum-mode t)
+ '(package-selected-packages
+   (quote
+    (flycheck-pyflakes evil-commentary yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe use-package toc-org spacemacs-theme spaceline smooth-scrolling smeargle restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-yapf popwin pony-mode pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el paradox page-break-lines orgit org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file neotree move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu elisp-slime-nav drupal-mode define-word cython-mode company-statistics company-quickhelp company-anaconda clean-aindent-mode buffer-move bracketed-paste base16-theme auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(tool-bar-mode nil)
  '(transient-mark-mode (quote (only . t))))
 (custom-set-faces
