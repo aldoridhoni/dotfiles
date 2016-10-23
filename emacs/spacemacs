@@ -8,7 +8,7 @@ You should not put any user code in this function besides modifying the variable
 values."
   (setq-default
    ;; Base distribution to use. This is a layer contained in the directory
-   ;; `+distribution'. For now available distributions are `spacemhttp://gihttp://github.com/milkypostman/powerline/thub.com/milkypostman/powerline/acs-base'
+   ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. acs
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
