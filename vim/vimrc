@@ -134,5 +134,8 @@ if has("unix")
     color Tomorrow-Night-Eighties
 endif
 
-
 set showcmd
+
+if &term =~ '256color'
+    set t_ut=
+endif  

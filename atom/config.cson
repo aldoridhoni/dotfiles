@@ -10,20 +10,24 @@
       "metrics"
       "linter-chktex"
     ]
+    openEmptyEditorOnStart: false
     themes: [
       "one-dark-ui"
       "base16-tomorrow-dark-theme"
+      "zenburn"
     ]
   editor:
+    fontFamily: "Meslo LG M DZ For Powerline"
     invisibles: {}
     scrollPastEnd: true
     showInvisibles: true
+    showIndentGuide: true
   "latex-plus": {}
   linter:
     errorPanelHeight: 26
     showErrorPanel: false
-  "linter-chktex": {}
   "vim-mode":
     startInInsertMode: true
+    useClipboardAsDefaultRegister: true
   welcome:
     showOnStartup: false
