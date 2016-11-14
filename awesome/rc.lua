@@ -29,6 +29,9 @@ do
         in_error = true
 
         naughty.notify({ preset = naughty.config.presets.critical,
+                         height = 200,
+                         width = 200,
+                         timeout = 5,
                          title = "Oops, an error happened!",
                          text = err })
         in_error = false
@@ -41,7 +44,7 @@ end
 beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "st -f='Meslo LG M DZ for Powerline'"
+terminal = "st -f='Meslo LG M DZ for Powerline:size=10'"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 emacs = terminal .. " -e " .. "emacs -nw"
@@ -118,7 +121,10 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock()
+mytextclock = awful.widget.textclock("%H:%M")
+
+mytextbox = wibox.widget.textbox()
+mytextbox:set_text("")
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -199,8 +205,9 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mytextbox)
     right_layout:add(mytextclock)
-    right_layout:add(mylayoutbox[s])
+    -- right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
@@ -354,14 +361,20 @@ clientbuttons = awful.util.table.join(
     awful.button({ modkey }, 3, awful.mouse.client.resize))
 
 -- Alt + Tab for fast switching window
-clientkeys = awful.util.table.join(
+clientkeys = awful.util.table.join(clientkeys,
 awful.key({ "Mod1",           }, "Tab",                                                      
         function ()
-              switcher.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")
+            switcher.switch(1, "Alt_L", "Tab", "ISO_Left_Tab")
         end),                                                                                                                          
 awful.key({ "Mod1", "Shift"   }, "Tab",                                                      
         function ()                                                                              
-        switcher.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")
+            switcher.switch(-1, "Alt_L", "Tab", "ISO_Left_Tab")
+        end),
+
+-- Screenshot using Prt Scr key
+awful.key({ }, "Print", 
+        function ()
+            awful.util.spawn("scrot -e 'mv $f ~/Pictures/ 2>/dev/null'")
         end)
 )
 
@@ -462,6 +475,41 @@ client.connect_signal("manage", function (c, startup)
     end
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
+client.connect_signal("focus", function(c)
+    if c.maximized or c.fullscreen then
+        c.border_width = 0
+    else
+        c.border_width = beautiful.border_width
+    end
+    c.border_color = beautiful.border_focus
+end)
+
+client.connect_signal("property::maximized", function(c)
+    c.border_width = 0
+end)
+
+client.connect_signal("property::fullscreen", function(c)
+    c.border_width = 0
+end)
+
+client.connect_signal("unfocus", function(c) 
+    c.border_color = beautiful.border_normal
+    c.opacity = 0.7
+end)
+
+tag.connect_signal("property::layout", function(t)
+    local layout = awful.tag.getproperty(t, "layout").name
+    local text = "Layout of tag " .. t.name .. " is now function "
+    text = text ..  layout
+    naughty.notify({ title = "Layout changed", text = text, timeout = 2})
+    local c = client.focus
+    if layout == "fullscreen" then
+        c.fullscreen = true
+    end
+    if layout == "max" then
+        c.maximized = true
+    end
+    c.maximized = false
+    c.fullscreen = false
+end)
+ -- }}}

@@ -24,7 +24,7 @@ color.whitesmoke = '#f5f5f5'
 
 theme = {}
 
-theme.font          = "Meslo LG M DZ for Powerline 9"
+theme.font          = "Meslo LG M DZ for Powerline 10"
 
 theme.bg_normal     = color.prettydark
 -- theme.bg_focus      = "#535d6c"

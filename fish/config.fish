@@ -21,7 +21,14 @@ function t
 end
 
 function c
-  command clear
+  command tput clear
+end
+
+function b
+    set -l lines
+    set lines (tput lines)
+    command tput clear
+    command tput cup $lines
 end
 
 if test -e '/etc/lsb-release' -o -e '/etc/os-release'
