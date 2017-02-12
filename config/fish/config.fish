@@ -6,7 +6,11 @@ if test -e '/usr/local/textlive/2015/bin/x86_64-linux/tex'
 end
 
 # /usr/local/bin
-set fish_user_paths $fish_user_paths '/usr/local/bin'
+set fish_user_paths $fish_user_paths '/usr/local/bin' '/usr/sbin' '/sbin' '/usr/bin' '/usr/sbin'
+
+if test -e '/usr/libexec'
+  set fish_user_paths $fish_user_paths '/usr/libexec'
+end
 
 function df --description 'Displays disk free space'
   command df -H $argv

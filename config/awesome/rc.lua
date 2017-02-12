@@ -44,7 +44,7 @@ end
 beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "st -f='Meslo LG M DZ for Powerline:size=10'"
+terminal = "roxterm"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 emacs = terminal .. " -e " .. "emacs -nw"
@@ -55,6 +55,22 @@ emacs = terminal .. " -e " .. "emacs -nw"
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+
+
+
+-- Customize tasklist label
+local common = require("awful.widget.common") 
+function tasklist_custom_function(w, buttons, label, data, clients)
+    -- Replace label function for all client
+
+    local function my_label(o)
+        local text, bg, bg_image, icon = label(o)
+        texting = "<span color='#ffffff'>♦</span> " .. text
+        return texting, bg, bg_image, icon
+    end
+
+    common.list_update(w, buttons, my_label, data, clients)
+end
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
@@ -77,7 +93,7 @@ local layouts =
 -- {{{ Wallpaper
 if beautiful.wallpaper then
     for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+        gears.wallpaper.maximized(beautiful.wallpaper, s, false)
     end
 end
 -- }}}
@@ -86,9 +102,10 @@ end
 -- Define a tag table which hold all screen tags.
 tags = {
 	names = {
-		'0:tmux',
-		'1:emacs',
-        '2:fun'
+		'0',
+		'1',
+        '2',
+        '3',
 	}
 }
 for s = 1, screen.count() do
@@ -191,7 +208,8 @@ for s = 1, screen.count() do
     mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons,
+                    nil, tasklist_custom_function)
 
     -- Create the wibox
     mywibox[s] = awful.wibox({ position = "top", screen = s })
@@ -204,7 +222,7 @@ for s = 1, screen.count() do
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    -- if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mytextbox)
     right_layout:add(mytextclock)
     -- right_layout:add(mylayoutbox[s])
@@ -512,4 +530,5 @@ tag.connect_signal("property::layout", function(t)
     c.maximized = false
     c.fullscreen = false
 end)
+
  -- }}}

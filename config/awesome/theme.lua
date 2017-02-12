@@ -24,7 +24,7 @@ color.whitesmoke = '#f5f5f5'
 
 theme = {}
 
-theme.font          = "Meslo LG M DZ for Powerline 10"
+theme.font          = "Droid Sans Mono for Powerline Mono Bold 9"
 
 theme.bg_normal     = color.prettydark
 -- theme.bg_focus      = "#535d6c"
@@ -34,7 +34,7 @@ theme.bg_minimize   = "#444444"
 theme.bg_systray    = theme.bg_normal
 
 theme.fg_normal     = color.whitesmoke
-theme.fg_focus      = color.rh1
+theme.fg_focus      = color.dodgerblue
 theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
@@ -114,7 +114,10 @@ theme.awesome_icon = "~/.config/awesome/logo.png"
 
 -- Define the icon theme for application icons. If not set then the icons 
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
-theme.icon_theme = nil
+theme.icon_theme = "Arc"
+
+theme.tasklist_disable_icon = true
+theme.tasklist_plain_task_name = true
 
 return theme
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
