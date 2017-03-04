@@ -1,0 +1,5 @@
+# UTF
+set -x LANG en_US.UTF-8
+
+# Python
+set -gx PYTHONDONTWRITEBYTECODE 1
