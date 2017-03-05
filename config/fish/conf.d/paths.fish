@@ -1,8 +1,8 @@
-# /usr/local/bin
-set fish_user_paths $fish_user_paths '/usr/local/bin' '/usr/sbin' '/sbin' '/usr/bin' '/usr/sbin'
-
-if test -e '/usr/libexec'
-  set fish_user_paths $fish_user_paths '/usr/libexec'
+# bin folders
+for path in '/usr/local/bin' '/usr/sbin' '/sbin' '/usr/bin'  '/usr/libexec'
+  if [ -d $path -a -r $path ]
+    set fish_user_paths $fish_user_paths $path
+  end
 end
 
 # Latex
