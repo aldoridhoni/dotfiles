@@ -2,3 +2,5 @@ ipython/
 KEY.md
 task/
 tmux/tmux-scroll-copy-mode
+emacs/e.el
+mc/mc.ext
