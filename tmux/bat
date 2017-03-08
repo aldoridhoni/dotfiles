@@ -1,8 +1,39 @@
 #!/bin/bash
-percent=$(ioreg -l | grep -i capacity | tr '\n' ' | ' | awk '{printf("%d", $10/$5 * 100)}')
+unamestr=$(uname)
+percent=0
+
+if [[ "$unamestr" == 'Linux' ]]; then
+    # ..
+    if [[ -d "/sys/class/power_supply/BAT0" ]]; then
+        percent=$(cat "/sys/class/power_supply/BAT0/capacity")
+    elif [[ -d "/sys/class/power_supply/BAT1" ]]; then
+        percent=$(cat "/sys/class/power_supply/BAT1/capacity")
+    else 
+        echo -n " "
+        exit
+    fi
+elif [[ "$unamestr" == 'Darwin' ]]; then
+
+    line=$(ioreg -c AppleSmartBattery | grep -i capacity | tr '\n' ' | ')
+    current=$(echo $line | cut -c 25)
+    max=$(echo $line | cut -c 47)
+    if [[ $max > 0 || $current > 0 ]]; then
+        percent=($current/$max * 100)
+    else 
+        echo -n " "
+        exit
+    fi
+    
+elif [[ "$unamestr" == 'FreeBSD' ]]; then
+    # ..
+    echo -n " "
+    exit
+fi
+
 if   (( percent > 80 )); then color='#[nobright fg=green]'
 elif (( percent > 65 )); then color='#[bright fg=yellow]'
 elif (( percent > 40 )); then color='#[bright red]'
-                         else color='#[nobright red]'
+else color='#[nobright red]'
 fi
-echo "$color$percent%"
+echo -n " $color$percent% "
+

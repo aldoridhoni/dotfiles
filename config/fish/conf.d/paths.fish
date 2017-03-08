@@ -17,9 +17,9 @@ if test -e "$HOME/.cargo/bin"
 end
 
 if test -e "$HOME/.multirust/toolchains"
-  set toolchain (rustup show | grep '(default)' | awk '{print $1}')
-  if test -e ~/.multirust/toolchains/$toolchain/lib/rustlib/src/rust/src
-    set -gx RUST_SRC_PATH ~/.multirust/toolchains/$toolchain/lib/rustlib/src/rust/src
+  set -l toolchain (rustup show | grep '(default)' | awk '{print $1}')
+  if test -e "$HOME/.multirust/toolchains/$toolchain/lib/rustlib/src/rust/src"
+    set -gx RUST_SRC_PATH "$HOME/.multirust/toolchains/$toolchain/lib/rustlib/src/rust/src"
   end
 end
 
@@ -28,4 +28,10 @@ if test -e "$HOME/.go"
   set -xg GOPATH "$HOME/.go"
 end
 
-
+# ruby gem
+if test -e "$HOME/.gem/ruby"
+  set -l ruby_ver (ruby -e 'puts RUBY_VERSION')
+  if test -e "$HOME/.gem/ruby/$ruby_ver/bin"
+    set fish_user_paths $fish_user_paths "$HOME/.gem/ruby/$ruby_ver/bin"
+  end
+end
