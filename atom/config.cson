@@ -1,33 +1,51 @@
 "*":
+  "atom-material-ui":
+    colors:
+      abaseColor: "#d21b1b"
+      genAccent: true
+      paintCursor: true
+    treeView:
+      compactList: true
+    ui:
+      panelContrast: true
+      panelShadows: true
   core:
     autoHideMenuBar: true
     disabledPackages: [
-      "latex-plus"
+      "about"
       "spell-check"
-      "release-notes"
       "timecop"
+      "update-package-dependencies"
       "welcome"
-      "metrics"
-      "linter-chktex"
+      "background-tips"
+      "rustsym"
     ]
-    openEmptyEditorOnStart: false
+    telemetryConsent: "no"
     themes: [
-      "one-dark-ui"
-      "base16-tomorrow-dark-theme"
-      "zenburn"
+      "atom-material-ui"
+      "monokai"
     ]
   editor:
-    fontFamily: "Meslo LG M DZ For Powerline"
-    invisibles: {}
+    fontFamily: "droid sans mono for powerline"
+    fontSize: 15
     scrollPastEnd: true
-    showInvisibles: true
-    showIndentGuide: true
-  "latex-plus": {}
-  linter:
-    errorPanelHeight: 26
-    showErrorPanel: false
-  "vim-mode":
+    tabLength: 4
+  "markdown-preview":
+    useGitHubStyle: true
+  "platformio-ide-terminal":
+    core:
+      workingDirectory: "Active File"
+    style:
+      defaultPanelHeight: "150px"
+      fontSize: "11"
+      theme: "one-dark"
+    toggles:
+      autoClose: true
+  racer:
+    racerBinPath: "/bin/racer"
+  "tree-view":
+    hideVcsIgnoredFiles: true
+  "vim-mode-plus":
     startInInsertMode: true
+    statusBarModeStringStyle: "long"
     useClipboardAsDefaultRegister: true
-  welcome:
-    showOnStartup: false

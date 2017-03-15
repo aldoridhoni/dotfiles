@@ -1,6 +1,8 @@
-ipython/
+/ipython/
 KEY.md
-task/
-tmux/tmux-scroll-copy-mode
-emacs/e.el
-mc/mc.ext
+/task/
+/tmux/tmux-scroll-copy-mode
+/emacs/e.el
+/mc/mc.ext
+/vim/bundle/
+fishd*

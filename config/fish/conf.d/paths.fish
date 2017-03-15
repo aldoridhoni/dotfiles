@@ -29,7 +29,7 @@ if test -e "$HOME/.go"
 end
 
 # ruby gem
-if test -e "$HOME/.gem/ruby"
+if test -e "$HOME/.gem/ruby" -a \( (command -v ruby > /dev/null; echo $status) -eq 0 \)
   set -l ruby_ver (ruby -e 'puts RUBY_VERSION')
   if test -e "$HOME/.gem/ruby/$ruby_ver/bin"
     set fish_user_paths $fish_user_paths "$HOME/.gem/ruby/$ruby_ver/bin"
