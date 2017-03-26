@@ -1,0 +1,32 @@
+[user]
+  name = Aldo Ridhoni
+  email = aldoridhoni@gmail.com
+[diff]
+[color]
+  ui = auto
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+[alias]
+  st = status
+  div = divergence
+  b = branch
+  pom = push origin master
+	pushall = "!for i in `git remote`; do git push $i; done;"
+	pullall = "!for i in `git remote`; do git pull $i master; done;"
+[push]
+	default = simple
+[merge]
+  tool = vimdiff
+[code]
+  editor = vim
