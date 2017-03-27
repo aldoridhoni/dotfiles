@@ -3,6 +3,14 @@ function df --description 'Displays disk free space'
   command df -H $argv
 end
 
+function vim --description 'Kill the habit'
+  if test "$EDITOR" = "vim"
+    command vim $argv
+  else
+    em $argv
+  end
+end
+
 function em
   command emacsclient -t $argv
 end

@@ -28,7 +28,7 @@ values."
      better-defaults
      emacs-lisp
      (git :variables git-magit-status-fullscreen t)
-     markdown
+     (markdown :variables markdown-live-preview-engine 'vmd)
      org
       (shell :variables
              shell-default-height 30
@@ -61,7 +61,6 @@ values."
      shell-scripts
      tmux
      github
-     selectric
      nginx
      osx
      aldo
@@ -290,9 +289,10 @@ you should place you code here."
    (setq powerline-default-separator 'slant)
    (setq dotspacemacs-mode-line-unicode-symbols t)
    (setq dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png"))
+  (setq neo-theme 'nerd)
+  (setq vc-follow-symlinks t)
+  (setq desktop-save-mode t)
   (spaceline-compile)
-  (desktop-save-mode t)
-  (desktop-read)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
