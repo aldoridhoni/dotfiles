@@ -59,6 +59,11 @@ function pl
   command asciinema play $argv
 end
 
-function less
-  command less --quit-if-one-screen --line-numbers --no-init $argv
+function present
+  set -x THEME 'light'
+  command tmux -2 -L 1 new -A -s "-"
+end
+
+function prambors
+  command cvlc 'http://masima.rastream.com/masima-pramborsjakarta'
 end

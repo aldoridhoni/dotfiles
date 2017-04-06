@@ -132,13 +132,15 @@ function abs() {
 
 function init_spacemacs {
     install_packages git emacs
-    action "$(abs emacs/spacemacs)" $HOME/.spacemacs
+    action "$(abs emacs/spacemacs.d)" $HOME/.spacemacs.d
     cd $HOME
     if [[ "$BACKUP" == "1" ]]; then
         mv .emacs.d .emacs.d.bak
         mv .emacs .emacs.bak
     fi
     git clone https://github.com/syl20bnr/spacemacs .emacs.d
+    sudo pip install flake8 autoflake isort anaconda yapf
+    sudo npm install -g tern vmd js-beautify eslint
 }
 
 function init_vim {

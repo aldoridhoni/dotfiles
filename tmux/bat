@@ -14,7 +14,7 @@ if [[ "$unamestr" == 'Linux' ]]; then
         else
             percent=$(termux-battery-status | grep 'percentage' | awk -e '{gsub(/,$/,""); print$2}')
         fi
-    else 
+    else
         echo -n ""
         exit
     fi
@@ -25,11 +25,11 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
     max=$(echo $line | cut -c 47)
     if [[ $max > 0 || $current > 0 ]]; then
         percent=($current/$max * 100)
-    else 
+    else
         echo -n ""
         exit
     fi
-    
+
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
     # ..
     echo -n ""
@@ -42,4 +42,3 @@ elif (( percent > 40 )); then color='#[bright red]'
 else color='#[nobright red]'
 fi
 echo -n "$color$percent% "
-

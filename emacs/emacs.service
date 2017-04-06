@@ -1,12 +1,13 @@
-[Unit]
+# Emacs 26.1 181bd84 is including an emacs.service file
+after[Unit]
 Description=Emacs: the extensible, self-documenting text editor
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/emacs --daemon --no-desktop
+ExecStart=/usr/bin/emacs --daemon
 ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
 Environment=SSH_AUTH_SOCK=%t/keyring/ssh
-Restart=always
+Restart=on-failure
 
 [Install]
 WantedBy=default.target
