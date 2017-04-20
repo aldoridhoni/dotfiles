@@ -33,7 +33,7 @@ end
 
 # Mac
 if test -e '/System/Library/CoreServices/SystemVersion.plist'
-  set fish_color_cwd 000000
+  set fish_color_cwd 666
   exit
 end
 

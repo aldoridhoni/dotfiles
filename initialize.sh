@@ -140,7 +140,7 @@ function init_spacemacs {
     fi
     git clone https://github.com/syl20bnr/spacemacs .emacs.d
     sudo pip install flake8 autoflake isort anaconda yapf
-    sudo npm install -g tern vmd js-beautify eslint
+    sudo npm install -g tern vmd js-beautify eslint tide typescript tslint
 }
 
 function init_vim {
