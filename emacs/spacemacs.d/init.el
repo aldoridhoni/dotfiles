@@ -32,24 +32,25 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     lua csv vimscript html django yaml sql php go
-     auto-completion
-     better-defaults
-     emacs-lisp
      (typescript :variables typescript-fmt-on-save nil)
      (git :variables git-magit-status-fullscreen t)
      (markdown :variables markdown-live-preview-engine 'vmd)
      (org :variables
           org-enable-github-support t
           org-enable-bootstrap-support t
-          org-enable-reveal-js-support t)
+          org-enable-reveal-js-support t
+          org-directory "~/org"
+          org-agenda-span 14
+          org-agenda-files (file-expand-wildcards "~/org/*.org")
+          org-agenda-skip-scheduled-if-done t
+          org-agenda-skip-deadline-if-done t
+          org-agenda-inhibit-startup t
+          org-log-into-drawer "LOGBOOK")
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom
              shell-default-term-shell "/usr/bin/fish"
              shell-default-shell 'ansi-term )
-     ;; spell-checking
-     syntax-checking
      (python :variables
              python-enable-yapf-format-on-save t
              python-test-runner 'pytest)
@@ -63,16 +64,40 @@ values."
      (javascript :variables javascript-disable-tern-port-files t)
      (latex :variables latex-enable-auto-fill t)
      (rust :variables rust-enable-format-on-save t)
+     (ibuffer :variables ibuffer-group-buffers-by 'projects)
      evil-commentary
-     docker ansible puppet
+     docker
+     ;; ansible
+     puppet
      shell-scripts
-     tmux github nginx osx
+     tmux
+     github
+     nginx
+     osx
+     lua
+     csv
+     vimscript
+     html
+     django
+     yaml
+     sql
+     php
+     go
+     auto-completion
+     better-defaults
+     syntax-checking
+     emacs-lisp
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(monokai-theme web-mode ox-gfm php-extras)
+   dotspacemacs-additional-packages '(monokai-theme
+                                      web-mode
+                                      ox-gfm
+                                      php-extras
+                                      all-the-icons
+                                      all-the-icons-dired)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -119,7 +144,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading t
    ;; Specify the startup banner. Default value is `official', it displays
@@ -145,12 +170,6 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(monokai
-                         zenburn
-                         hc-zenburn
-                         spacemacs-dark
-                         spacemacs-light
-                         solarized-light
-                         solarized-dark
                          leuven)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -218,7 +237,7 @@ values."
    dotspacemacs-helm-resize nil
    ;; if non nil, the helm header is hidden when there is only one source.
    ;; (default nil)
-   dotspacemacs-helm-no-header nil
+   dotspacemacs-helm-no-header t
    ;; define the position to display `helm', options are `bottom', `top',
    ;; `left', or `right'. (default 'bottom)
    dotspacemacs-helm-position 'bottom
@@ -339,10 +358,23 @@ you should place you code here."
    (setq powerline-default-separator 'slant)
    (setq dotspacemacs-mode-line-unicode-symbols t)
    (setq dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png"))
-  (setq neo-theme 'nerd)
+
+  ;; NeoTree
+  (setq neo-theme (if (display-graphic-p) 'icons 'nerd))
+  (setq neo-vc-integration '(face char))
+  (setq neo-show-updir-line t)
+  (setq neo-smart-open t)
+  (setq neo-show-hidden-files t)
+  (setq neo-banner-message nil)
+
   (setq vc-follow-symlinks t)
-  (setq desktop-save-mode t)
+  (setq desktop-save-mode nil)
+
   (spaceline-compile)
+
+  ;; Keybinding
+  (global-set-key (kbd "C-S-d") 'spacemacs/duplicate-line-or-region)
+  (global-set-key (kbd "C-S-v") 'clipboard-yank)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -352,6 +384,8 @@ you should place you code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["#bcbcbc" "#d70008" "#5faf00" "#875f00" "#268bd2" "#800080" "#008080" "#5f5f87"])
  '(blink-cursor-mode nil)
@@ -359,9 +393,9 @@ you should place you code here."
  '(compilation-message-face (quote default))
  '(custom-safe-themes
    (quote
-    ("1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "1d079355c721b517fdc9891f0fda927fe3f87288f2e6cc3b8566655a64ca5453" "a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "bcc6775934c9adf5f3bd1f428326ce0dcd34d743a92df48c128e6438b815b44f" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "613a7c50dbea57860eae686d580f83867582ffdadd63f0f3ebe6a85455ab7706" "a1289424bbc0e9f9877aa2c9a03c7dfd2835ea51d8781a0bf9e2415101f70a7e" "2d16f85f22f1841390dfc1234bd5acfcce202d9bb1512aa8eabd0068051ac8c3" "1e3b2c9e7e84bb886739604eae91a9afbdfb2e269936ec5dd4a9d3b7a943af7f" "b6db49cec08652adf1ff2341ce32c7303be313b0de38c621676122f255ee46db" "cdfb22711f64d0e665f40b2607879fcf2607764b2b70d672ddaa26d2da13049f" "03e3e79fb2b344e41a7df897818b7969ca51a15a67dc0c30ebbdeb9ea2cd4492" "e8e744a1b0726814ac3ab86ad5ccdf658b9ff1c5a63c4dc23841007874044d4a" "3a3917dbcc6571ef3942c2bf4c4240f70b5c4bc0b28192be6d3f9acd83607a24" "70b9c3d480948a3d007978b29e31d6ab9d7e259105d558c41f8b9532c13219aa" "790e74b900c074ac8f64fa0b610ad05bcfece9be44e8f5340d2d94c1e47538de" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+    ("f78de13274781fbb6b01afd43327a4535438ebaeec91d93ebdbba1e3fba34d3c" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(doc-view-image-width 850)
- '(evil-want-Y-yank-to-eol t)
+ '(evil-want-Y-yank-to-eol nil)
  '(fci-rule-color "#5E5E5E" t)
  '(global-auto-revert-mode t)
  '(global-flycheck-mode t)
@@ -383,7 +417,7 @@ you should place you code here."
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (tide typescript-mode winum unfill fuzzy company-ansible solarized-theme ox-reveal ox-html5slide ox-twbs ox-gfm lua-mode csv-mode vmd-mode vimrc-mode dactyl-mode selectric-mode toml-mode racer flycheck-rust seq cargo rust-playground rust-mode powerline spinner org alert log4e gntp markdown-mode hydra parent-mode projectile request gitignore-mode pos-tip flycheck pkg-info epl flx magit smartparens iedit anzu evil goto-chg undo-tree highlight php-mode diminish company bind-map bind-key yasnippet packed anaconda-mode pythonic f s helm avy helm-core async auto-complete popup package-build hc-zenburn-theme zenburn-theme auctex-latexmk reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl xterm-color web-beautify sql-indent shell-pop rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake puppet-mode nginx-mode multi-term minitest magit-gh-pulls livid-mode skewer-mode simple-httpd js2-refactor multiple-cursors js2-mode js-doc jinja2-mode insert-shebang go-guru go-eldoc github-search github-clone magit-popup git-commit with-editor github-browse-file gist gh marshal logito pcache ht fish-mode eshell-z eshell-prompt-extras esh-help dockerfile-mode docker json-mode tablist docker-tramp dash json-snatcher json-reformat company-tern dash-functional tern company-shell company-go go-mode company-auctex coffee-mode chruby bundler inf-ruby auctex ansible-doc ansible tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify uuidgen py-isort org-projectile org-download mwim live-py-mode link-hint hide-comnt git-link eyebrowse evil-visual-mark-mode evil-ediff dumb-jump column-enforce-mode flycheck-pyflakes evil-commentary yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe use-package toc-org spacemacs-theme spaceline smooth-scrolling smeargle restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-yapf popwin pony-mode pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el paradox page-break-lines orgit org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file neotree move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu elisp-slime-nav drupal-mode define-word cython-mode company-statistics company-quickhelp company-anaconda clean-aindent-mode buffer-move base16-theme auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (font-lock+ all-the-icons-dired all-the-icons ibuffer-projectile blank-mode tide typescript-mode winum unfill fuzzy company-ansible solarized-theme ox-reveal ox-html5slide ox-twbs ox-gfm lua-mode csv-mode vmd-mode vimrc-mode dactyl-mode selectric-mode toml-mode racer flycheck-rust seq cargo rust-playground rust-mode powerline spinner org alert log4e gntp markdown-mode hydra parent-mode projectile request gitignore-mode pos-tip flycheck pkg-info epl flx magit smartparens iedit anzu evil goto-chg undo-tree highlight php-mode diminish company bind-map bind-key yasnippet packed anaconda-mode pythonic f s helm avy helm-core async auto-complete popup package-build auctex-latexmk reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl xterm-color web-beautify sql-indent shell-pop rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake puppet-mode nginx-mode multi-term minitest magit-gh-pulls livid-mode skewer-mode simple-httpd js2-refactor multiple-cursors js2-mode js-doc jinja2-mode insert-shebang go-guru go-eldoc github-search github-clone magit-popup git-commit with-editor github-browse-file gist gh marshal logito pcache ht fish-mode eshell-z eshell-prompt-extras esh-help dockerfile-mode docker json-mode tablist docker-tramp dash json-snatcher json-reformat company-tern dash-functional tern company-shell company-go go-mode company-auctex coffee-mode chruby bundler inf-ruby auctex ansible-doc ansible tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify uuidgen py-isort org-projectile org-download mwim live-py-mode link-hint hide-comnt git-link eyebrowse evil-visual-mark-mode evil-ediff dumb-jump column-enforce-mode flycheck-pyflakes evil-commentary yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe use-package toc-org spacemacs-theme spaceline smooth-scrolling smeargle restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-yapf popwin pony-mode pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el paradox page-break-lines orgit org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file neotree move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu elisp-slime-nav drupal-mode define-word cython-mode company-statistics company-quickhelp company-anaconda clean-aindent-mode buffer-move base16-theme auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#A6E22E")
  '(pos-tip-foreground-color "#272822")
@@ -411,11 +445,12 @@ you should place you code here."
      (360 . "#E090C7"))))
  '(vc-annotate-very-old-color "#E090C7")
  '(weechat-color-list
-   (unspecified "#272822" "#20240E" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
+   (unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Droid Sans Mono for Powerline" :foundry "1ASC" :slant normal :weight normal :height 98 :width normal))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
