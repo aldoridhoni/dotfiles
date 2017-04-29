@@ -1,20 +1,47 @@
-# dotfiles
+# dotfiles ⌨️
 
-### program
+### Program List
 - emacs
 - vim
 - atom
 - tmux
 - fish
 - awesome
+- ...
 
-### screenshot
+### Screenshot Terminal
+
+- Mac
+
 [![screenshot][img]][link]
 
-[img]: screenshot.png
-[link]: screenshot.png
+[img]: scr-mac.png
+[link]: scr-mac.png
 
-[![screenshot2][img2]][link2]
+- Linux Mint
 
-[img2]: screenshot2.png
-[link2]: screenshot2.png
+[![screenshot][img2]][link2]
+
+[img2]: scr-mint-shadow.png
+[link2]: scr-mint-shadow.png
+
+- Fedora
+
+[![screenshot][img2]][link2]
+
+[img2]: scr-mint-shadow.png
+[link2]: scr-mint-shadow.png
+
+- Arch
+
+- Tumbleweed
+
+- Termux (android)
+
+[![screenshot][img2]][link2]
+
+[img2]: scr-termux-shadow.png
+[link2]: scr-termux-shadow.png
+
+### License
+MIT
