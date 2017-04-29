@@ -29,8 +29,8 @@
 
 [![screenshot][img-fedora]][link-fedora]
 
-[img-fedora]: screenshot/scr-mint-shadow.png
-[link-fedora]: screenshot/scr-mint-shadow.png
+[img-fedora]: screenshot/scr-fedora-shadow.png
+[link-fedora]: screenshot/scr-fedora-shadow.png
 
 - Arch
 
