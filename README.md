@@ -15,22 +15,22 @@
 
 [![screenshot][img]][link]
 
-[img]: scr-mac.png
-[link]: scr-mac.png
+[img]: screenshot/scr-mac.png
+[link]: screenshot/scr-mac.png
 
 - Linux Mint
 
 [![screenshot][img2]][link2]
 
-[img2]: scr-mint-shadow.png
-[link2]: scr-mint-shadow.png
+[img2]: screenshot/scr-mint-shadow.png
+[link2]: screenshot/scr-mint-shadow.png
 
 - Fedora
 
-[![screenshot][img2]][link2]
+[![screenshot][img-fedora]][link-fedora]
 
-[img2]: scr-mint-shadow.png
-[link2]: scr-mint-shadow.png
+[img-fedora]: screenshot/scr-mint-shadow.png
+[link-fedora]: screenshot/scr-mint-shadow.png
 
 - Arch
 
@@ -38,10 +38,10 @@
 
 - Termux (android)
 
-[![screenshot][img2]][link2]
+[![screenshot][img-termux]][link-termux]
 
-[img2]: scr-termux-shadow.png
-[link2]: scr-termux-shadow.png
+[img-termux]: screenshot/scr-termux-shadow.png
+[link-termux]: screenshot/scr-termux-shadow.png
 
 ### License
 MIT
