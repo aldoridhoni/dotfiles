@@ -34,6 +34,17 @@
 
 - Arch
 
+[![screenshot][img-arch]][link-arch]
+
+[img-arch]: screenshot/scr-arch1-shadow.png
+[link-arch]: screenshot/scr-arch1-shadow.png
+
+
+[![screenshot][img-arch2]][link-arch2]
+
+[img-arch2]: screenshot/scr-arch2-shadow.png
+[link-arch2]: screenshot/scr-arch2-shadow.png
+
 - Tumbleweed
 
 - Termux (android)
