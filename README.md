@@ -47,6 +47,12 @@
 
 - Tumbleweed
 
+[![screenshot][img-opensuse]][link-opensuse]
+
+[img-opensuse]: screenshot/scr-opensuse-shadow.png
+[link-opensuse]: screenshot/scr-opensuse-shadow.png
+
+
 - Termux (android)
 
 [![screenshot][img-termux]][link-termux]
