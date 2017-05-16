@@ -31,6 +31,7 @@
    (quote
     (monokai-theme which-key web-mode helm-projectile helm-descbinds blank-mode)))
  '(visible-bell t)
+)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -57,7 +58,18 @@
 (require 'helm-descbinds)
 (helm-descbinds-mode)
 (setq helm-descbinds-window-style 'split
-      helm-ff-file-name-history-use-recentf t)
+      helm-ff-file-name-history-use-recentf t
+      help-window-select t
+      helm-display-header-line nil
+      helm-autoresize-mode 1)
+(defvar helm-source-header-default-background
+  (face-attribute 'helm-source-header :background))
+(defvar helm-source-header-default-foreground
+  (face-attribute 'helm-source-header :foreground))
+(defvar helm-source-header-default-box
+  (face-attribute 'helm-source-header :box))
+(defvar helm-source-header-default-height
+  (face-attribute 'helm-source-header :height))
 
 ;; Which-key Package
 (require 'which-key)
@@ -69,10 +81,14 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-S-v") 'clipboard-yank)
 
 (setq inhibit-splash-screen t)
 (setq require-final-newline t)
 (setq make-backup-files nil)
 (setq initial-scratch-message nil)
 (setq delete-trailing-lines nil)
+;; Auto refresh
+(setq global-auto-revert-mode 1)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(fset 'yes-or-no-p 'y-or-n-p)
