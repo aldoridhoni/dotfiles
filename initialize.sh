@@ -177,6 +177,7 @@ function init_fish {
         action "$(abs $file)" $HOME/.config/fish/conf.d/
     done
     action "$(abs config/fish/config.fish)" $HOME/.config/fish/config.fish
+    echo /usr/local/bin/fish | sudo tee -a /etc/shells
 }
 
 main $@

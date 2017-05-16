@@ -21,8 +21,8 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'Darwin' ]]; then
 
     line=$(ioreg -c AppleSmartBattery | grep -i capacity | tr '\n' ' | ')
-    current=$(echo $line | cut -c 25)
-    max=$(echo $line | cut -c 47)
+    current=$(echo $line | cut -d ' ' -f 10)
+    max=$(echo $line | cut -d ' ' -f 5)
     if [[ $max > 0 || $current > 0 ]]; then
         percent=($current/$max * 100)
     else

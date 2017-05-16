@@ -11,10 +11,7 @@
 
 (defconst aldo-packages
   '(
-    ;; org-mode export
     ox-html5slide
-    ox-gfm
-    php-extras
     ))
 
 (defun aldo/init-ox-html5slide ()
@@ -22,8 +19,4 @@
     :defer t)
   )
 
-(defun aldo/init-ox-gfm ()
-  (use-package ox-gfm
-    :defer t)
-  )
 ;;; packages.el ends here

@@ -16,7 +16,7 @@ function fish_prompt --description 'Write out the prompt'
    set -l info ''
 
    switch $USER
-     case root toor
+     case root
        set suffix '#'
        if set -q fish_color_cwd_root
          set -g __fish_prompt_cwd $fish_prompt_cwd_root

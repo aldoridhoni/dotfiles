@@ -1,5 +1,4 @@
 (require 'package)
-(setq package-list '(helm helm-descbinds which-key blank-mode web-mode monokai-theme))
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
@@ -10,12 +9,16 @@
       (package-refresh-contents)))
 
 ;; Install the missing packages
-(dolist (package package-list)
+(dolist (package package-selected-packages)
   (unless (package-installed-p package)
     (package-install package)))
 
 
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (monokai)))
  '(custom-safe-themes
    (quote
@@ -23,14 +26,18 @@
  '(global-hl-line-mode t)
  '(global-linum-mode t)
  '(global-reveal-mode t)
- '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
     (monokai-theme which-key web-mode helm-projectile helm-descbinds blank-mode)))
- '(visible-bell t))
+ '(visible-bell t)
 (custom-set-faces
- )
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(which-key-command-description-face ((t (:foreground "dim gray"))))
+ '(which-key-local-map-description-face ((t (:foreground "dim gray")))))
 
 ;; Do something if using X
 (when (display-graphic-p)
@@ -54,7 +61,7 @@
 
 ;; Which-key Package
 (require 'which-key)
-(which-key-mode)
+(which-key-mode t)
 (setq which-key-popup-type 'minibuffer)
 (setq which-key-idle-delay 0.4)
 
@@ -62,3 +69,10 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+(setq inhibit-splash-screen t)
+(setq require-final-newline t)
+(setq make-backup-files nil)
+(setq initial-scratch-message nil)
+(setq delete-trailing-lines nil)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)

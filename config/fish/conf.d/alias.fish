@@ -11,8 +11,13 @@ function vim --description 'Kill the habit'
   end
 end
 
+# Emacs
+function e
+  command emacsclient $argv
+end
+
 function em
-  command emacsclient -t $argv
+  e -t $argv
 end
 
 function sem
@@ -20,7 +25,7 @@ function sem
 end
 
 function emc
-  command emacsclient -c -a emacs $argv
+  e -c -a emacs $argv
 end
 
 function t

@@ -11,3 +11,8 @@ set -x __fish_git_prompt_char_dirtystate '*'
 set -x __fish_git_prompt_char_invalidstate '#'
 set -x __fish_git_prompt_char_stagedstate '+'
 set -x __fish_git_prompt_char_stashstate '$'
+
+# emacs-shell
+if test "$TERM" = "eterm-color"
+  function fish_title; end; funcsave fish_title
+end
