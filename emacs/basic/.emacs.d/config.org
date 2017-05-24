@@ -1,0 +1,205 @@
+#+TITLE: Emacs configuration
+
+* Setting Package
+
+** Meta Package - Package
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+#+END_SRC
+
+** Fetch packages-list
+#+BEGIN_SRC emacs-lisp
+(unless package-archive-contents
+  (or (file-exists-p package-user-dir)
+      (package-refresh-contents)))
+#+END_SRC
+
+** Install the missing packages
+#+BEGIN_SRC emacs-lisp
+(dolist (package package-selected-packages)
+  (unless (package-installed-p package)
+    (package-install package)))
+#+END_SRC
+
+** Require
+- Add lisp folder
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+#+END_SRC
+- Require packages
+#+BEGIN_SRC emacs-lisp
+(require 'zoom-frm)
+(require 'helm-config)
+(require 'helm-descbinds)
+(require 'which-key)
+(require 'multi-term)
+#+END_SRC
+
+* Setting Theme
+#+BEGIN_SRC emacs-lisp
+(defun my-theme-hook ()
+  (interactive)
+  (custom-theme-set-faces
+   'material-light
+   '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
+   '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
+   '(font-lock-constant-face ((t (:foreground "#7653c1"))))
+   '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
+   '(font-lock-function-name-face ((t (:foreground "#43279a"))))
+   '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
+   '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
+   '(font-lock-string-face ((t (:foreground "#bc670f"))))
+   '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
+   '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
+   '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
+   '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 2 :color "#ECEFF1"))))))
+)
+#+END_SRC
+
+* Setting Helm
+#+BEGIN_SRC emacs-lisp
+(helm-descbinds-mode)
+(setq helm-descbinds-window-style 'split
+      helm-ff-file-name-history-use-recentf t
+      help-window-select t
+      helm-display-header-line nil
+      helm-autoresize-mode 1)
+(defvar helm-source-header-default-background
+  (face-attribute 'helm-source-header :background))
+(defvar helm-source-header-default-foreground
+  (face-attribute 'helm-source-header :foreground))
+(defvar helm-source-header-default-box
+  (face-attribute 'helm-source-header :box))
+(defvar helm-source-header-default-height
+  (face-attribute 'helm-source-header :height))
+#+END_SRC
+
+* Which-Key
+#+BEGIN_SRC emacs-lisp
+(which-key-mode t)
+(setq which-key-popup-type 'minibuffer)
+(setq which-key-idle-delay 0.4)
+#+END_SRC
+
+* Org-mode
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/org"
+      org-agenda-span 14
+      org-agenda-files (file-expand-wildcards "~/org/*.org")
+      org-agenda-prefix-format "  %-17:c%?-12t% s"
+      org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-reverse-note-order t
+      org-export-with-section-numbers nil
+      org-export-with-toc nil
+      org-hide-leading-stars t
+      org-default-notes-file (concat org-directory "/notes.org"))
+
+(define-key global-map "\C-cc" 'org-capture)
+#+END_SRC
+
+* Setting Keybindings
+** Helm
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+#+END_SRC
+
+** Clipboard
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-S-v") 'clipboard-yank)
+#+END_SRC
+
+** Zoom Frame
+ #+BEGIN_SRC emacs-lisp
+ (global-set-key (kbd "C-x  C-+") 'zoom-in/out)
+ (global-set-key (kbd "C-x  C--") 'zoom-in/out)
+ (global-set-key (kbd "C-x  C-=") 'zoom-in/out)
+ (global-set-key (kbd "C-x  C-0") 'zoom-in/out)
+ #+END_SRC
+
+* Variables
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-splash-screen t)
+(setq require-final-newline t)
+(setq make-backup-files nil)
+(setq initial-scratch-message nil)
+(setq delete-trailing-lines nil)
+;; Auto refresh
+(setq global-auto-revert-mode 1)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+- window selection in cardinal direction
+#+BEGIN_SRC emacs-lisp
+(windmove-default-keybindings)
+#+END_SRC
+
+* Custom Functions
+** Load theme hook
+#+BEGIN_SRC emacs-lisp
+(defvar after-load-theme-hook nil
+  "Hook run after a color theme is loaded using `load-theme'.")
+(defadvice load-theme (after run-after-load-theme-hook activate)
+  "Run `after-load-theme-hook'."
+  (run-hooks 'after-load-theme-hook))
+#+END_SRC
+
+** Fish in multi-term
+  #+BEGIN_SRC emacs-lisp
+(defun fish-term ()
+  (interactive)
+  (setq current-home (getenv "HOME"))
+  (let ((multi-term-program "fish")
+        (multi-term-buffer-name "fish* *"))
+    (setenv "HOME" (concat "/home/" user-real-login-name))
+    (multi-term))
+  (setenv "HOME" current-home)
+  )
+  #+END_SRC
+
+   - Hook for multi-term
+    #+BEGIN_SRC emacs-lisp
+    (add-hook 'term-mode-hook (lambda ()
+      (setq term-buffer-maximum-size 10000)
+      (setq show-trailingwhitespace nil)
+      (linum-mode -1)
+      (line-number-mode -1)
+      (define-key term-raw-map (kbd "C-y") 'term-paste)
+    ))
+    #+END_SRC
+
+* X Window
+** Do something if using X
+ #+BEGIN_SRC emacs-lisp
+  (when (display-graphic-p)
+  ;; Hide tool-bar
+  (tool-bar-mode 0)
+  ;; Toggle menu-bar
+  (menu-bar-mode)
+  ;; Scroll-bar
+  (scroll-bar-mode 0)
+  ;; Set theme
+  (load-theme 'material-light)
+  (enable-theme 'material-light)
+  ;; Maximize initial frame
+  (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+  )
+ #+END_SRC
+
+** Last Thing
+ #+BEGIN_SRC emacs-lisp
+ (add-hook 'after-load-theme-hook 'my-theme-hook)
+ #+END_SRC
+
+ - Starting server
+ #+BEGIN_SRC emacs-lisp
+ (add-hook 'after-init-hook
+        (lambda ()
+          (require 'server)
+          (unless (server-running-p)
+            (server-start))))
+ #+END_SRC
