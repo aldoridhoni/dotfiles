@@ -1,11 +1,13 @@
 #+TITLE: Emacs configuration
+#+AUTHOR: Aldo Ridhoni
+#+STARTUP: indent content
 
 * Setting Package
-
 ** Meta Package - Package
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 #+END_SRC
 
 ** Fetch packages-list
@@ -23,11 +25,11 @@
 #+END_SRC
 
 ** Require
-- Add lisp folder
+  - Add lisp folder
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path (concat user-emacs-directory "/lisp/"))
 #+END_SRC
-- Require packages
+  - Require packages
 #+BEGIN_SRC emacs-lisp
 (require 'zoom-frm)
 (require 'helm-config)
@@ -36,170 +38,277 @@
 (require 'multi-term)
 #+END_SRC
 
+* Variables
+- Set variables
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-splash-screen t)
+  (setq require-final-newline t)
+  (setq make-backup-files nil)
+  (setq initial-scratch-message nil)
+  (setq delete-trailing-lines nil)
+#+END_SRC
+
+- Auto refresh file form disk
+#+BEGIN_SRC emacs-lisp
+  (setq global-auto-revert-mode 1)
+#+END_SRC
+
+- Delete trailing whitespace
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+- Zone Mode
+Run after 120 seconds of idle.
+#+BEGIN_SRC emacs-lisp
+  (setq zone-timer (run-with-idle-timer 120 t 'zone))
+#+END_SRC
+
+- Window selection in cardinal direction
+#+BEGIN_SRC emacs-lisp
+  (windmove-default-keybindings)
+#+END_SRC
+
+- Indent with spaces
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+- yes/no and y/n
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+- User home folder
+Aside from =(getenv "HOME")=, we can use tilde.
+#+BEGIN_SRC emacs-lisp
+  (defconst user-home-dir (file-name-as-directory
+                   (expand-file-name "~")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defconst user-home-real-dir (lambda ()
+                         (concat "/home/" user-real-login-name)))
+#+END_SRC
 * Setting Theme
 #+BEGIN_SRC emacs-lisp
-(defun my-theme-hook ()
-  (interactive)
-  (custom-theme-set-faces
-   'material-light
-   '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
-   '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
-   '(font-lock-constant-face ((t (:foreground "#7653c1"))))
-   '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
-   '(font-lock-function-name-face ((t (:foreground "#43279a"))))
-   '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
-   '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
-   '(font-lock-string-face ((t (:foreground "#bc670f"))))
-   '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
-   '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
-   '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
-   '(mode-line ((t (:background "#e8e8e8" :foreground "#212121" :box (:line-width 2 :color "#ECEFF1"))))))
-)
+  (defun aldo/theme-hook ()
+    (custom-theme-set-faces
+     'material-light
+     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
+     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
+     '(font-lock-constant-face ((t (:foreground "#7653c1"))))
+     '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
+     '(font-lock-function-name-face ((t (:foreground "#43279a"))))
+     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
+     '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
+     '(font-lock-string-face ((t (:foreground "#bc670f"))))
+     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
+     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
+     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
+     '(set-face-bold-p 'bold nil)
+     )
+    (set-face-attribute 'mode-line nil :background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1"))
+    (set-face-attribute 'linum nil :weight 'normal :height 1.0)
+  )
 #+END_SRC
 
 * Setting Helm
 #+BEGIN_SRC emacs-lisp
-(helm-descbinds-mode)
-(setq helm-descbinds-window-style 'split
-      helm-ff-file-name-history-use-recentf t
-      help-window-select t
-      helm-display-header-line nil
-      helm-autoresize-mode 1)
-(defvar helm-source-header-default-background
-  (face-attribute 'helm-source-header :background))
-(defvar helm-source-header-default-foreground
-  (face-attribute 'helm-source-header :foreground))
-(defvar helm-source-header-default-box
-  (face-attribute 'helm-source-header :box))
-(defvar helm-source-header-default-height
-  (face-attribute 'helm-source-header :height))
+  (helm-descbinds-mode)
+  (setq helm-descbinds-window-style 'split
+        helm-ff-file-name-history-use-recentf t
+        help-window-select t
+        helm-display-header-line nil
+        helm-autoresize-mode 1)
+  (defvar helm-source-header-default-background
+    (face-attribute 'helm-source-header :background))
+  (defvar helm-source-header-default-foreground
+    (face-attribute 'helm-source-header :foreground))
+  (defvar helm-source-header-default-box
+    (face-attribute 'helm-source-header :box))
+  (defvar helm-source-header-default-height
+    (face-attribute 'helm-source-header :height))
 #+END_SRC
 
 * Which-Key
 #+BEGIN_SRC emacs-lisp
-(which-key-mode t)
-(setq which-key-popup-type 'minibuffer)
-(setq which-key-idle-delay 0.4)
+  (which-key-mode t)
+  (setq which-key-popup-type 'minibuffer)
+  (setq which-key-idle-delay 0.4)
 #+END_SRC
 
+* Programming Language
+** Python Mode
+** Rust Mode
+** Typescript Mode
+** Web Mode
 * Org-mode
+** Set variables
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/org"
-      org-agenda-span 14
-      org-agenda-files (file-expand-wildcards "~/org/*.org")
-      org-agenda-prefix-format "  %-17:c%?-12t% s"
-      org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-reverse-note-order t
-      org-export-with-section-numbers nil
-      org-export-with-toc nil
-      org-hide-leading-stars t
-      org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-directory (file-name-as-directory
+                        (concat user-home-dir "org"))
+          org-agenda-span 14
+          org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
+          org-agenda-prefix-format "  %-17:c%?-12t% s"
+          org-agenda-skip-scheduled-if-done t
+          org-agenda-skip-deadline-if-done t
+          org-reverse-note-order t
+          org-export-with-section-numbers nil
+          org-export-with-toc nil
+          org-hide-leading-stars t
+          org-default-notes-file (expand-file-name "notes.org" org-directory)
+          org-src-fontify-natively t
+          org-startup-indented t
+          org-bullets-mode 1)
 
-(define-key global-map "\C-cc" 'org-capture)
+    (define-key global-map "\C-cc" 'org-capture)
+#+END_SRC
+
+** Org bullet
+#+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+
+** Level remove bold
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook
+    (lambda ()
+    "Stop the org-level headers from increasing in height relative to the other text."
+    (dolist (face '(org-level-1
+                    org-level-2
+                    org-level-3
+                    org-level-4
+                    org-level-5))
+      (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
+  )
 #+END_SRC
 
 * Setting Keybindings
 ** Helm
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
 #+END_SRC
 
 ** Clipboard
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-S-v") 'clipboard-yank)
+  (global-set-key (kbd "C-S-v") 'clipboard-yank)
 #+END_SRC
 
 ** Zoom Frame
  #+BEGIN_SRC emacs-lisp
- (global-set-key (kbd "C-x  C-+") 'zoom-in/out)
- (global-set-key (kbd "C-x  C--") 'zoom-in/out)
- (global-set-key (kbd "C-x  C-=") 'zoom-in/out)
- (global-set-key (kbd "C-x  C-0") 'zoom-in/out)
+   (global-set-key (kbd "C-x  C-+") 'zoom-in/out)
+   (global-set-key (kbd "C-x  C--") 'zoom-in/out)
+   (global-set-key (kbd "C-x  C-=") 'zoom-in/out)
+   (global-set-key (kbd "C-x  C-0") 'zoom-in/out)
  #+END_SRC
 
-* Variables
+** Insert Line Before
 #+BEGIN_SRC emacs-lisp
-(setq inhibit-splash-screen t)
-(setq require-final-newline t)
-(setq make-backup-files nil)
-(setq initial-scratch-message nil)
-(setq delete-trailing-lines nil)
-;; Auto refresh
-(setq global-auto-revert-mode 1)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(fset 'yes-or-no-p 'y-or-n-p)
+  (global-set-key (kbd "C-S-o") 'aldo/insert-line-before)
 #+END_SRC
-
-- window selection in cardinal direction
-#+BEGIN_SRC emacs-lisp
-(windmove-default-keybindings)
-#+END_SRC
-
 * Custom Functions
+** Real =HOME= wrapper
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/wrap-real-home (fn &optional n)
+    "Wraps function in real HOME"
+    (setenv "HOME" user-home-real-dir)
+    (funcall fn n)
+    (setenv "HOME" user-home-dir)
+    )
+#+END_SRC
 ** Load theme hook
 #+BEGIN_SRC emacs-lisp
-(defvar after-load-theme-hook nil
-  "Hook run after a color theme is loaded using `load-theme'.")
-(defadvice load-theme (after run-after-load-theme-hook activate)
-  "Run `after-load-theme-hook'."
-  (run-hooks 'after-load-theme-hook))
+  (defvar after-load-theme-hook nil
+    "Hook run after a color theme is loaded using `load-theme'.")
+
+  (defadvice load-theme (after run-after-load-theme-hook activate)
+    "Run `after-load-theme-hook'."
+    (run-hooks 'after-load-theme-hook))
 #+END_SRC
 
 ** Fish in multi-term
-  #+BEGIN_SRC emacs-lisp
-(defun fish-term ()
-  (interactive)
-  (setq current-home (getenv "HOME"))
-  (let ((multi-term-program "fish")
-        (multi-term-buffer-name "fish* *"))
-    (setenv "HOME" (concat "/home/" user-real-login-name))
-    (multi-term))
-  (setenv "HOME" current-home)
-  )
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/fish-term ()
+    (interactive)
+    (let ((multi-term-program "fish")
+          (multi-term-buffer-name "fish* *"))
+      (multi-term))
+    )
+#+END_SRC
 
-   - Hook for multi-term
-    #+BEGIN_SRC emacs-lisp
-    (add-hook 'term-mode-hook (lambda ()
-      (setq term-buffer-maximum-size 10000)
-      (setq show-trailingwhitespace nil)
-      (linum-mode -1)
-      (line-number-mode -1)
-      (define-key term-raw-map (kbd "C-y") 'term-paste)
-    ))
-    #+END_SRC
+- Hook for multi-term
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'term-mode-hook (lambda ()
+    (setq term-buffer-maximum-size 10000)
+    (setq show-trailingwhitespace nil)
+    (linum-mode -1)
+    (line-number-mode -1)
+    (define-key term-raw-map (kbd "C-y") 'term-paste)
+  ))
+#+END_SRC
+
+** Edit this file
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/edit-config ()
+    (interactive)
+    (find-file (concat user-emacs-directory "/config.org"))
+  )
+#+END_SRC
+
+** Open =org-directory=
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/dired-org-dir ()
+    (interactive)
+    (dired org-directory))
+#+END_SRC
+** Insert new line before
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/insert-line-before (times)
+    (interactive "p")
+    (save-recursion
+     (move-beginning-of-line 1)
+     (newline times)))
+#+END_SRC
 
 * X Window
 ** Do something if using X
  #+BEGIN_SRC emacs-lisp
-  (when (display-graphic-p)
-  ;; Hide tool-bar
-  (tool-bar-mode 0)
-  ;; Toggle menu-bar
-  (menu-bar-mode)
-  ;; Scroll-bar
-  (scroll-bar-mode 0)
-  ;; Set theme
-  (load-theme 'material-light)
-  (enable-theme 'material-light)
-  ;; Maximize initial frame
-  (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-  )
+   (when window-system
+     ;; Scroll-bar
+     (toggle-scroll-bar -1)
+     ;; Maximize initial frame
+     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+     ;; Set theme
+     (load-theme 'material-light)
+     (enable-theme 'material-light)
+     (aldo/theme-hook)
+     ;; Hide tool-bar
+     (tool-bar-mode -1)
+     ;; Toggle menu-bar
+     (menu-bar-mode -1)
+     (redraw-display)
+   )
  #+END_SRC
 
-** Last Thing
+** Load theme hook
  #+BEGIN_SRC emacs-lisp
- (add-hook 'after-load-theme-hook 'my-theme-hook)
+   (add-hook 'after-load-theme-hook 'aldo/theme-hook)
  #+END_SRC
-
- - Starting server
+** Starting server
  #+BEGIN_SRC emacs-lisp
- (add-hook 'after-init-hook
-        (lambda ()
-          (require 'server)
-          (unless (server-running-p)
-            (server-start))))
+   (add-hook 'after-init-hook
+          (lambda ()
+            (require 'server)
+            (unless (server-running-p)
+              (server-start))))
  #+END_SRC
+** MOTD
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'window-setup-hook
+          (lambda ()
+            (message "This too shall pass")))
+#+END_SRC

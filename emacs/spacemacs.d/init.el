@@ -27,7 +27,10 @@ values."
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '("~/.spacemacs.d/layers/")
+   dotspacemacs-configuration-layer-path
+   (cons
+    (file-name-as-directory (concat dotspacemacs-directory "layers"))
+    '())
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -39,18 +42,20 @@ values."
           org-enable-github-support t
           org-enable-bootstrap-support t
           org-enable-reveal-js-support t
-          org-directory "~/org"
+          org-directory (file-name-as-directory
+                         (concat user-home-directory "org"))
           org-agenda-span 14
-          org-agenda-files (file-expand-wildcards "~/org/*.org")
+          org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
           org-agenda-skip-scheduled-if-done t
           org-agenda-skip-deadline-if-done t
           org-agenda-inhibit-startup t
+          org-default-notes-file (expand-file-name "notes.org" org-directory)
           org-log-into-drawer "LOGBOOK")
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom
              shell-default-term-shell "/bin/bash"
-             shell-default-shell 'multiterm )
+             shell-default-shell 'multiterm)
      (python :variables
              python-enable-yapf-format-on-save t
              python-test-runner 'pytest)
@@ -62,11 +67,13 @@ values."
            web-mode-sql-indent-offset 2
            css-indent-offset 2)
      (javascript :variables javascript-disable-tern-port-files t)
-     (latex :variables latex-enable-auto-fill t)
+     ;; (latex :variables latex-enable-auto-fill t)
      (rust :variables rust-enable-format-on-save t)
      (ibuffer :variables ibuffer-group-buffers-by 'projects)
      (auto-completion :variables
-                      auto-completion-private-snippets-directory "~/.spacemacs.d/snippets/")
+                      auto-completion-private-snippets-directory
+                      (file-name-as-directory
+                       (concat dotspacemacs-directory "snippets")))
      evil-commentary
      docker
      ;; ansible
@@ -99,7 +106,8 @@ values."
                                       ox-gfm
                                       all-the-icons
                                       all-the-icons-dired
-                                      xwidgete)
+                                      xwidgete
+                                      auctex-latexmk)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -167,7 +175,7 @@ values."
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'org-mode
+   dotspacemacs-scratch-mode 'text-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -268,7 +276,7 @@ values."
    dotspacemacs-fullscreen-at-startup nil
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
-   dotspacemacs-fullscreen-use-non-native nil
+   dotspacemacs-fullscreen-use-non-native t
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
@@ -345,6 +353,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  ;; (defun spacemacs-buffer/goto-buffer ()
+    ;; (switch-to-buffer "*scratch*"))
   )
 
 (defun dotspacemacs/user-config ()
@@ -354,36 +364,6 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place you code here."
-  (setq powerline-default-separator 'utf-8)
-  (spacemacs|do-after-display-system-init
-   ;; This sets separator for GUI.
-   (setq powerline-default-separator 'slant)
-   (setq dotspacemacs-mode-line-unicode-symbols t)
-   (setq dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png")
-   (setq neo-theme 'icons)
-
-   ;; osx
-   (when (spacemacs/system-is-mac)
-    (setq ns-use-srgb-colorspace nil)
-    (spacemacs/toggle-frame-fullscreen)
-    (setq neo-theme 'arrow)))
-
-  ;; NeoTree
-  ;; (setq neo-theme (if (display-graphic-p) 'icons 'nerd))
-  (setq neo-vc-integration '(face char))
-  (setq neo-show-updir-line t)
-  (setq neo-smart-open t)
-  (setq neo-show-hidden-files t)
-  (setq neo-banner-message nil)
-
-  (setq vc-follow-symlinks t)
-  (setq desktop-save-mode nil)
-
-  (spaceline-compile)
-
-  ;; Keybinding
-  (global-set-key (kbd "C-S-d") 'spacemacs/duplicate-line-or-region)
-  (global-set-key (kbd "C-S-v") 'clipboard-yank)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -426,7 +406,7 @@ you should place you code here."
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (xwidgete memoize font-lock+ all-the-icons-dired all-the-icons ibuffer-projectile blank-mode tide typescript-mode winum unfill fuzzy company-ansible solarized-theme ox-reveal ox-html5slide ox-twbs ox-gfm lua-mode csv-mode vmd-mode vimrc-mode dactyl-mode selectric-mode toml-mode racer flycheck-rust seq cargo rust-playground rust-mode powerline spinner org alert log4e gntp markdown-mode hydra parent-mode projectile request gitignore-mode pos-tip flycheck pkg-info epl flx magit smartparens iedit anzu evil goto-chg undo-tree highlight php-mode diminish company bind-map bind-key yasnippet packed anaconda-mode pythonic f s helm avy helm-core async auto-complete popup package-build auctex-latexmk reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl xterm-color web-beautify sql-indent shell-pop rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake puppet-mode nginx-mode multi-term minitest magit-gh-pulls livid-mode skewer-mode simple-httpd js2-refactor multiple-cursors js2-mode js-doc jinja2-mode insert-shebang go-guru go-eldoc github-search github-clone magit-popup git-commit with-editor github-browse-file gist gh marshal logito pcache ht fish-mode eshell-z eshell-prompt-extras esh-help dockerfile-mode docker json-mode tablist docker-tramp dash json-snatcher json-reformat company-tern dash-functional tern company-shell company-go go-mode company-auctex coffee-mode chruby bundler inf-ruby auctex ansible-doc ansible tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify uuidgen py-isort org-projectile org-download mwim live-py-mode link-hint hide-comnt git-link eyebrowse evil-visual-mark-mode evil-ediff dumb-jump column-enforce-mode flycheck-pyflakes evil-commentary yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe use-package toc-org spacemacs-theme spaceline smooth-scrolling smeargle restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-yapf popwin pony-mode pip-requirements phpunit phpcbf php-auto-yasnippets persp-mode pcre2el paradox page-break-lines orgit org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file neotree move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu elisp-slime-nav drupal-mode define-word cython-mode company-statistics company-quickhelp company-anaconda clean-aindent-mode buffer-move base16-theme auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (org-tree-slide xwidgete memoize font-lock+ all-the-icons-dired all-the-icons ibuffer-projectile blank-mode tide typescript-mode winum unfill fuzzy company-ansible solarized-theme ox-reveal ox-html5slide ox-twbs ox-gfm lua-mode csv-mode vmd-mode vimrc-mode dactyl-mode selectric-mode toml-mode racer flycheck-rust seq cargo rust-playground rust-mode powerline spinner org alert log4e gntp markdown-mode hydra parent-mode projectile request gitignore-mode pos-tip flycheck pkg-info epl flx magit smartparens iedit anzu evil goto-chg undo-tree highlight php-mode diminish company bind-map bind-key yasnippet packed anaconda-mode pythonic f s helm avy helm-core async auto-complete popup package-build auctex-latexmk reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl xterm-color web-beautify sql-indent shell-pop rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake puppet-mode nginx-mode multi-term minitest magit-gh-pulls livid-mode skewer-mode simple-httpd js2-refactor multiple-cursors js2-mode js-doc jinja2-mode insert-shebang go-guru go-eldoc github-search github-clone magit-popup git-commit with-editor github-browse-file gist gh marshal logito pcache ht fish-mode eshell-z eshell-prompt-extras esh-help dockerfile-mode docker json-mode tablist docker-tramp dash json-snatcher json-reformat company-tern dash-functional tern company-shell company-go go-mode company-auctex coffee-mode chruby bundler inf-ruby auctex ansible-doc ansible tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify uuidgen py-isort org-projectile org-download mwim live-py-mode link-hint hide-comnt git-link eyebrowse evil-visual-mark-mode evil-ediff dumb-jump column-enforce-mode flycheck-pyflakes evil-commentary yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe use-package toc-org spacemacs-theme spaceline smooth-scrolling smeargle restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-yapf popwin pony-mode pip-requirements phpunit phpcbf php-auto-yasnippets persp-mode pcre2el paradox page-break-lines orgit org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file neotree move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu elisp-slime-nav drupal-mode define-word cython-mode company-statistics company-quickhelp company-anaconda clean-aindent-mode buffer-move base16-theme auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#A6E22E")
  '(pos-tip-foreground-color "#272822")
@@ -462,4 +442,6 @@ you should place you code here."
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Droid Sans Mono for Powerline" :foundry "1ASC" :slant normal :weight normal :height 98 :width normal))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
+ '(mode-line-buffer-id ((t (:foreground "#e59728" :weight bold))))
+ '(spacemacs-emacs-face ((t (:background "#3c6eb4" :foreground "#ffffff" :inherit (quote mode-line))))))
