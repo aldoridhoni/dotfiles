@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 unamestr=$(uname)
 percent=0
 
@@ -31,9 +32,7 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
     fi
 
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
-    # ..
-    echo -n ""
-    exit
+    percent=$(acpiconf -i batt | grep "Remaining capacity" | awk '{print $NF}' | tr -d '%')
 fi
 
 if   (( percent > 80 )); then color='#[nobright fg=green]'
