@@ -20,7 +20,7 @@
   (interactive)
   (if (get 'aldo/toggle-powerline-separator 'state)
       (progn
-        (setq powerline-default-separator 'utf8)
+        (setq powerline-default-separator 'utf-8)
         (powerline-set-selected-window)
         (powerline-reset)
         (spaceline-compile)
