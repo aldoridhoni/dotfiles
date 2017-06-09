@@ -22,10 +22,10 @@
   div = divergence
   b = branch
   pom = push origin master
-	pushall = "!for i in `git remote`; do git push $i; done;"
-	pullall = "!for i in `git remote`; do git pull $i master; done;"
+  pushall = "!for i in `git remote`; do git push $i; done;"
+  pullall = "!for i in `git remote`; do git pull $i master; done;"
 [push]
-	default = simple
+  default = simple
 [merge]
   tool = vimdiff
 [code]

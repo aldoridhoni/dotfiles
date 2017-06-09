@@ -8,6 +8,7 @@ emacs/basic/.local/
 emacs/basic/.gnupg/
 emacs/basic/.emacs.d/elpa/
 emacs/basic/.emacs.d/recentf
+emacs/basic/.emacs.d/config.el
 mc/mc.ext
 vim/bundle/
 fishd*
