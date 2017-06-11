@@ -1,9 +1,13 @@
-(defun aldo/fish-term ()
+(defun aldo/fish-term (&optional cmd)
   " Muti-term with fish "
   (interactive)
   (let ((multi-term-program "fish")
         (multi-term-buffer-name "fish* *"))
-    (multi-term)))
+    (multi-term)
+    (if cmd
+        (progn
+          (term-send-raw-string cmd)
+          (term-send-raw-string "\n")))))
 
 (defun aldo/open-localhost ()
   (interactive)

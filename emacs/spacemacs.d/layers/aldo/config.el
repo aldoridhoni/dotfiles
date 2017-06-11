@@ -2,7 +2,6 @@
 
 (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
 
-;; eshell
 (setq tramp-default-method "ssh")
 
 ;; Auto follow symlinks
@@ -37,11 +36,13 @@
 
 (add-hook 'find-file-hook
           (lambda ()
-            (message "find-file-hook")))
+                                        ;(message "find-file-hook")
+            ))
 
 (add-hook 'change-major-mode-hook
           (lambda ()
-            (message "change-major-mode-hook")))
+                                        ;(message "change-major-mode-hook")
+            ))
 
 (add-to-list 'after-make-frame-functions
              (lambda (_)
@@ -49,13 +50,13 @@
                (when (server-running-p)
                  (if (not (display-graphic-p _))
                      (progn
-                      (setq powerline-default-separator 'utf-8)
-                      (setq dotspacemacs-mode-line-unicode-symbols nil)
-                      (spaceline-compile))
+                       (setq powerline-default-separator 'utf-8)
+                       (setq dotspacemacs-mode-line-unicode-symbols nil)
+                       (spaceline-compile))
                    (progn
                      (setq powerline-default-separator 'slant)
-                    (setq dotspacemacs-mode-line-unicode-symbols 1)
-                    (spaceline-compile))))))
+                     (setq dotspacemacs-mode-line-unicode-symbols 1)
+                     (spaceline-compile))))))
 
 (add-to-list 'delete-frame-functions
              (lambda (_)
@@ -64,9 +65,9 @@
                  (if (not (display-graphic-p _))
                      (progn
                        (setq powerline-default-separator 'slant)
-                      (setq dotspacemacs-mode-line-unicode-symbols 1)
-                      (spaceline-compile))
+                       (setq dotspacemacs-mode-line-unicode-symbols 1)
+                       (spaceline-compile))
                    (progn
-                    (setq powerline-default-separator 'utf-8)
-                    (setq dotspacemacs-mode-line-unicode-symbols nil)
-                    (spaceline-compile))))))
+                     (setq powerline-default-separator 'utf-8)
+                     (setq dotspacemacs-mode-line-unicode-symbols nil)
+                     (spaceline-compile))))))

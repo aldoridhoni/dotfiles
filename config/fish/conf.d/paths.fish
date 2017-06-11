@@ -1,5 +1,5 @@
 # bin folders
-for path in '/usr/local/bin' '/usr/sbin' '/sbin' '/usr/bin'  '/usr/libexec'
+for path in '/usr/local/bin' '/usr/sbin' '/sbin' '/usr/bin'  '/usr/libexec' "$HOME/bin" "$HOME/.bin"
   if [ -d $path -a -r $path ]
     set fish_user_paths $fish_user_paths $path
   end
@@ -34,4 +34,9 @@ if test -e "$HOME/.gem/ruby" -a \( (command -v ruby > /dev/null; echo $status) -
   if test -e "$HOME/.gem/ruby/$ruby_ver/bin"
     set fish_user_paths $fish_user_paths "$HOME/.gem/ruby/$ruby_ver/bin"
   end
+end
+
+# Android
+if test -e "$HOME/android-development"
+  set -xg ANDROID_HOME "$HOME/android-development"
 end

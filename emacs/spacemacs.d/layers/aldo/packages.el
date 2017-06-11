@@ -12,15 +12,26 @@
 (defconst aldo-packages
   '(
     ox-html5slide
-    persp-mode
-    neotree
     spaceline
+    neotree
+    persp-mode
+    all-the-icons
+    all-the-icons-dired
     ))
 
 (defun aldo/init-ox-html5slide ()
   (use-package ox-html5slide
-    :defer t)
-  )
+    :defer t))
+
+(defun aldo/init-all-the-icons ()
+  (use-package all-the-icons
+    :defer t))
+
+(defun aldo/init-all-the-icons-dired ()
+  (use-package all-the-icons-dired
+    :defer t
+    :init
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
 
 (defun aldo/post-init-persp-mode ()
   (spacemacs|define-custom-layout "terminal"
@@ -28,16 +39,24 @@
     :body
     (aldo/fish-term)
     (split-window-right)
-    (aldo/fish-term)))
+    (aldo/fish-term))
+
+  (spacemacs|define-custom-layout "blog"
+    :binding "b"
+    :body
+    (aldo/fish-term "cd ~/blog\n. venv/bin/activate.fish")
+    (split-window-right)
+    (dired "~/blog")))
 
 (defun aldo/post-init-neotree ()
   (setq neo-vc-integration '(face char)
         neo-show-updir-line t
         neo-smart-open t
         neo-show-hidden-files t
-        neo-banner-message nil)
-  (when (spacemacs/system-is-mac)
-    (setq neo-theme 'arrow))
+        neo-banner-message nil
+        neo-theme 'arrow)
+  (when (member "all-the-icons" (font-family-list))
+    (setq neo-theme 'icons))
   (message "(aldo) --> post-init-neotree"))
 
 (defun aldo/post-init-spaceline ()
@@ -47,7 +66,6 @@
   (message "(aldo) --> post-init-spaceline"))
 
 (spacemacs|do-after-display-system-init
- (setq neo-theme 'icons)
  (setq dotspacemacs-colorize-cursor-according-to-state nil
        dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png")
  (message "(aldo) --> packages.el do-after-display-system-init"))

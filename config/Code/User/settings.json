@@ -1,4 +1,7 @@
-={
-  "telemetry.enableTelemetry": false,
-  "telemetry.enableCrashReporter": false
+{
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+    "window.zoomLevel": 1,
+    "editor.fontFamily": "Droid Sans Mono for Powerline",
+    "editor.fontSize": "14"
 }

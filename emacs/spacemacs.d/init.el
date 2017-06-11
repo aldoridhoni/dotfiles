@@ -104,8 +104,6 @@ values."
    dotspacemacs-additional-packages '(monokai-theme
                                       web-mode
                                       ox-gfm
-                                      all-the-icons
-                                      all-the-icons-dired
                                       xwidgete
                                       auctex-latexmk
                                       systemd)
