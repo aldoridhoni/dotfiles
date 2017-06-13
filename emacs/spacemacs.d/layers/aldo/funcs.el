@@ -56,3 +56,9 @@
     (local-set-key (kbd "RET") 'widget-button-press)
     (local-set-key [down-mouse-1] 'widget-button-click)
     (kill-buffer "*spacemacs*")))
+
+(defun aldo/clear-ui ()
+  (interactive)
+  (spacemacs/toggle-mode-line)
+  (spacemacs/toggle-line-numbers)
+  (spacemacs/toggle-which-key))

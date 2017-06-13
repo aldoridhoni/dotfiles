@@ -17,6 +17,7 @@
     persp-mode
     all-the-icons
     all-the-icons-dired
+    spacemacs-theme
     ))
 
 (defun aldo/init-ox-html5slide ()
@@ -64,6 +65,9 @@
   (setq dotspacemacs-mode-line-unicode-symbols t)
   (spaceline-compile)
   (message "(aldo) --> post-init-spaceline"))
+
+(defun aldo/post-init-spacemacs-theme ()
+  (setq spacemacs-theme-comment-bg nil))
 
 (spacemacs|do-after-display-system-init
  (setq dotspacemacs-colorize-cursor-according-to-state nil
