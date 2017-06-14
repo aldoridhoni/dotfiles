@@ -39,15 +39,21 @@
     :binding "t"
     :body
     (aldo/fish-term)
+    (persp-add-buffer)
     (split-window-right)
-    (aldo/fish-term))
+    (aldo/fish-term)
+    (persp-add-buffer))
 
   (spacemacs|define-custom-layout "blog"
     :binding "b"
     :body
     (aldo/fish-term "cd ~/blog\n. venv/bin/activate.fish")
+    (persp-add-buffer)
+    ;; (set-window-dedicated-p (get-buffer-window) t)
     (split-window-right)
-    (dired "~/blog")))
+    (dired "~/blog")
+    (persp-add-buffer)
+    ))
 
 (defun aldo/post-init-neotree ()
   (setq neo-vc-integration '(face char)
@@ -61,9 +67,11 @@
   (message "(aldo) --> post-init-neotree"))
 
 (defun aldo/post-init-spaceline ()
-  (setq powerline-default-separator 'slant)
-  (setq dotspacemacs-mode-line-unicode-symbols t)
-  (spaceline-compile)
+  (when (display-graphic-p)
+      (progn
+        (setq powerline-default-separator 'slant)
+        (setq dotspacemacs-mode-line-unicode-symbols t)
+        (spaceline-compile)))
   (message "(aldo) --> post-init-spaceline"))
 
 (defun aldo/post-init-spacemacs-theme ()

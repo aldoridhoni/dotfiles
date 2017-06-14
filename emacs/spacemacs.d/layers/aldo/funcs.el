@@ -42,20 +42,24 @@
   (browse-url-of-buffer))
 
 (defun aldo//scratch-buffer ()
-  (let ((spacemacs-buffer-name "*scratch*"))
-    (recentf-mode)
-    (insert "\n\n")
-    (insert (format "Welcome back %s!" user-full-name))
-    (insert "\n\n")
-    (spacemacs-buffer/insert-page-break)
-    (spacemacs-buffer//insert-file-list
-     "Recent Files:"
-     (spacemacs//subseq recentf-list 0 25))
-    (spacemacs-buffer/insert-page-break)
-    (page-break-lines-mode)
-    (local-set-key (kbd "RET") 'widget-button-press)
-    (local-set-key [down-mouse-1] 'widget-button-click)
-    (kill-buffer "*spacemacs*")))
+  (unless noninteractive
+    (setq initial-buffer-choice t)
+    (get-buffer "*scratch*")
+    (with-current-buffer "*scratch*"
+      (let ((spacemacs-buffer-name "*scratch*"))
+        (recentf-mode)
+        (insert "\n")
+        (insert (format "Welcome back %s!" user-full-name))
+        (insert "\n")
+        (spacemacs-buffer/insert-page-break)
+        (spacemacs-buffer//insert-file-list
+         "Recent Files:"
+         (spacemacs//subseq recentf-list 0 25))
+        (spacemacs-buffer/insert-page-break)
+        (page-break-lines-mode)
+        (local-set-key (kbd "RET") 'widget-button-press)
+        (local-set-key [down-mouse-1] 'widget-button-click)
+        (kill-buffer "*spacemacs*")))))
 
 (defun aldo/clear-ui ()
   (interactive)
