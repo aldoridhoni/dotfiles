@@ -1,5 +1,7 @@
 (defun aldo/fish-term (&optional cmd)
-  " Muti-term with fish "
+  "Muti-term with fish.
+CMD optional argument is command to run after starting shell.
+Separate multi line command with \n."
   (interactive)
   (let ((multi-term-program "fish")
         (multi-term-buffer-name "fish* *"))
@@ -9,18 +11,15 @@
         (term-send-raw-string cmd)
         (term-send-raw-string "\n")))))
 
-(defun aldo/open-localhost ()
-  (interactive)
-  (ansi-term "fish" "fish-shell"))
-
 (defun aldo/dired-layer ()
-  " Open dired buffer in this layer path "
+  "Open this layer path in dired buffer."
   (interactive)
   (dired
    (concat
     (car dotspacemacs-configuration-layer-path) "aldo")))
 
 (defun aldo/toggle-powerline-separator ()
+  "Toggle powerline separator between utf-8 and slant."
   (interactive)
   (if (get 'aldo/toggle-powerline-separator 'state)
       (progn
@@ -37,11 +36,13 @@
       (put 'aldo/toggle-powerline-separator 'state t))))
 
 (defun aldo/browse-org-export-twbs ()
+  "Run Org export to Bootstrap HTML and open in browser."
   (interactive)
   (org-twbs-export-as-html)
   (browse-url-of-buffer))
 
 (defun aldo/clear-ui ()
+  "Toggle UI, good for presentation."
   (interactive)
   (spacemacs/toggle-mode-line)
   (spacemacs/toggle-line-numbers)
@@ -51,8 +52,8 @@
 ;; Non-interactive functions
 
 (defun aldo//scratch-buffer ()
+  "Insert recent file list to scratch buffer."
   (unless noninteractive
-    (setq initial-buffer-choice t)
     (get-buffer "*scratch*")
     (with-current-buffer "*scratch*"
       (let ((spacemacs-buffer-name "*scratch*"))
@@ -67,11 +68,13 @@
         (spacemacs-buffer/insert-page-break)
         (page-break-lines-mode)
         (local-set-key (kbd "RET") 'widget-button-press)
-        (local-set-key [down-mouse-1] 'widget-button-click)
-        (kill-buffer "*spacemacs*")))))
+        (local-set-key [down-mouse-1] 'widget-button-click))
+      )))
 
 (defun aldo//set-fringe ()
-  ;; https://stackoverflow.com/questions/26824328/hide-change-emacs-fringe-bent-arrows-due-to-word-wrapping
+  "Change fringe from arrow to L shaped.
+  See https://stackoverflow.com/questions/26824328/hide-change-emacs-fringe-bent-arrows-due-to-word-wrapping"
+
   (define-fringe-bitmap 'left-curly-arrow
     ;; L bracket
     [#b00000000
@@ -104,8 +107,7 @@
     ))
 
 (defun aldo//theme-mod ()
-  ;; Theme modification
-
+  "Theme modification using built in spacemacs theming layer variable \"theming-modifications\"."
   (setq theming-modifications
         '(;; Daylerees Earthsong
           (theme-light
