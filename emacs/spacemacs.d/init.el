@@ -447,7 +447,4 @@ you should place you code here."
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Droid Sans Mono for Powerline" :foundry "1ASC" :slant normal :weight normal :height 98 :width normal))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(fringe ((t (:background nil))))
- '(mode-line-buffer-id ((t (:foreground "#e59728" :weight bold))))
- '(spacemacs-emacs-face ((t (:background "#3c6eb4" :foreground "#ffffff" :inherit (quote mode-line))))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
