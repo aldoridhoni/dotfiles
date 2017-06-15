@@ -358,9 +358,15 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  ;; (defun spacemacs-buffer/goto-buffer ()
-    ;; (switch-to-buffer "*scratch*"))
-  )
+  (setq spacemacs-buffer--current-note-type nil)
+
+  (defun spacemacs-buffer/goto-buffer (&optional _))
+
+  (defun spacemacs-buffer/display-startup-note ())
+
+  (defun spacemacs-buffer//startup-hook ())
+
+)
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -445,6 +451,5 @@ you should place you code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Droid Sans Mono for Powerline" :foundry "1ASC" :slant normal :weight normal :height 98 :width normal))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
