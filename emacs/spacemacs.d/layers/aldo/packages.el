@@ -68,10 +68,10 @@
 
 (defun aldo/post-init-spaceline ()
   (when (display-graphic-p)
-      (progn
-        (setq powerline-default-separator 'slant)
-        (setq dotspacemacs-mode-line-unicode-symbols t)
-        (spaceline-compile)))
+    (progn
+      (setq powerline-default-separator 'slant)
+      (setq dotspacemacs-mode-line-unicode-symbols t)
+      (spaceline-compile)))
   (message "(aldo) --> post-init-spaceline"))
 
 (defun aldo/post-init-spacemacs-theme ()
@@ -80,6 +80,10 @@
 (spacemacs|do-after-display-system-init
  (setq dotspacemacs-colorize-cursor-according-to-state nil
        dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png")
+ (when (spacemacs/system-is-mac)
+   (setq ns-use-srgb-colorspace nil)
+   (load-theme 'leuven t)
+   (modify-frame-parameters nil '((fullscreen . fullboth))))
  (message "(aldo) --> packages.el do-after-display-system-init"))
 
 ;;; packages.el ends here
