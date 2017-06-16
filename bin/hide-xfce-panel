@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# test -z "$1" && echo missing panel id  && exit 1
+# test ! -z "`echo $1 | sed s/[0-9]*//g`" && echo bad panel id  && exit 1
+
+CHANNEL=xfce4-panel
+PANELID="1"
+PROP=/panels/panel-$PANELID/autohide-behavior
+
+if [ `xfconf-query -c $CHANNEL -p $PROP` -eq "1" ] ; then
+    xfconf-query -c $CHANNEL -p $PROP -t int -s 0
+else
+    xfconf-query -c $CHANNEL -p $PROP -t int -s 1
+fi

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+kldload -n fuse
+kldload -n geom_linux_lvm
+echo "Choose partition name: "
+ls -1 /dev/linux_lvm | sed -e 's/^/- /'
+printf "> "
+read part_name
+if [ ! -c "/dev/linux_lvm/$part_name" ]; then
+  echo "==> Wrong partition name!"
+  exit 1
+fi
+if [ ! -d "/mnt/$part_name" ]; then
+  echo "==> Creating folder /mnt/$part_name"
+  mkdir "/mnt/$part_name"
+fi
+echo "==> Mounting LVM"
+ext4fuse "/dev/linux_lvm/$part_name" "/mnt/$part_name" -o allow_other

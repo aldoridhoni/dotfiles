@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+jls
+if [ $# -lt 1 ]
+then
+    printf "Jail name: "
+    read jail_name
+else
+    jail_name=$1
+fi
+
+if [ $jail_name == 'basejail' ]; then
+    exit
+fi
+
+if [ ! -z $jail_name ]; then
+    exit
+fi
+
+echo "==> Removing jail: $jail_name"
+# jail -r "$jail_name"
+ezjail-admin delete "$jail_name"
+
+echo "==> Recursive delete folder /usr/jails/$jail_name"
+if [ -d "/usr/jails/$jail_name" ]
+then
+    chflags -R noschg "/usr/jails/$jail_name"
+    rm -rf "/usr/jails/$jail_name"
+fi

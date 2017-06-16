@@ -1,0 +1,6 @@
+#!/bin/sh
+
+pkill -F /var/run/dhclient.wlan0.pid
+pkill -F /var/run/wpa_supplicant.pid
+ifconfig wlan0 down delete
+ifconfig wlan0 destroy

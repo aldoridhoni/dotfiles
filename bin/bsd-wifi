@@ -1,0 +1,12 @@
+#!/bin/sh
+
+kldload -n if_iwn
+echo "==> Restarting netif"
+service netif restart
+echo "==> Creating wlan0 interface"
+ifconfig wlan0 create wlandev iwn0
+echo "==> Starting wpa_supplicant"
+wpa_supplicant -s -B -i wlan0 -c /etc/wpa_supplicant.conf
+echo "==> Starting DHCP"
+dhclient wlan0
+ifconfig wlan0 list scan

@@ -1,0 +1,51 @@
+#!/bin/sh
+# Author : Aldo Ridhoni
+# Simple script for creating interface alias and jail.
+
+dev_name="lo1"
+dev_ip="172.16.1.1"
+
+printf "What is the jail name?  -> "
+read jail_name
+printf "Create new ifconfig device ($dev_name)? [y/n]  -> "
+read create_dev
+
+if [ $create_dev == 'y' ]; then
+    echo "==> Creating new ifconfig device ($dev_name) with ip ($dev_ip)"
+    # ifconfig $dev_name inet $dev_ip netmask 255.255.255.0
+    # echo "cloned_interfaces=\"lo1\"" >> /etc/rc.conf
+    # echo "ifconfig_$dev_name=\"inet $dev_ip netmask 255.255.255.0\"" >> /etc/rc.conf
+
+    # echo "==> Adding pf config for NAT"
+    # echo "nat on $dev_name from $dev_name:network to any -> (em0)" >> /etc/pf.conf
+fi
+
+echo "==> Listing ifconfig $dev_name inet"
+ifconfig $dev_name inet
+
+printf "Create new ifconfig alias? [y/n]  -> "
+read create_alias
+printf "What the alias name?  -> "
+read alias_name
+printf "What is the ip?  -> "
+read jail_ip
+
+if [ $create_alias == 'y' ]; then
+    echo "==> Creating new ifconfig alias"
+    ifconfig $dev_name alias $jail_ip netmask 255.255.255.0
+    echo "==> Adding line to /etc/rc.conf"
+    echo "" >> /etc/rc.conf
+    echo -n "# Alias added by create_jail on: " >> /etc/rc.conf
+    date >> /etc/rc.conf
+    echo "ifconfig_"$dev_name"_$alias_name=\"inet $jail_ip netmask 255.255.255.0\"" >> /etc/rc.conf
+fi
+
+echo "==> Restarting pf"
+service pf restart
+echo "==> Creating jail $jail_name with ip:$jail_ip"
+ezjail-admin create $jail_name $jail_ip
+echo "==> Starting jail and open console"
+ezjail-admin update -P
+ezjail-admin start $jail_name
+cp /etc/resolv.conf /usr/jails/$jail_name/etc/
+ezjail-admin console $jail_name
