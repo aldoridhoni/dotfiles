@@ -12,3 +12,8 @@
 
 (global-set-key (kbd "C-S-d") 'spacemacs/duplicate-line-or-region)
 (global-set-key (kbd "C-S-v") 'clipboard-yank)
+
+;; set F7 to list recently opened file
+(global-set-key (kbd "<f7>") 'recentf-open-files)
+
+(global-set-key (kbd "<f6>") 'aldo/helm-ff-layer)

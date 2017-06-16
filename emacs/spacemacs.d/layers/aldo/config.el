@@ -9,30 +9,33 @@
 (add-hook
  'emacs-startup-hook
  (defun aldo/startup-hook ()
+   (aldo//debug-message "emacs-startup-hook")
+   (when (boundp 'spacemacs-buffer-name)
+     (setq spacemacs-buffer-name "*scratch*"))
    (setq initial-buffer-choice (lambda () (get-buffer "*scratch*")))
-   ))
-
-(add-hook
- 'window-setup-hook
- (lambda ()
-   "Set variable and run functions. Run only once at startup and very late."
-   (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
-   (blink-cursor-mode 1)
-   (global-vi-tilde-fringe-mode -1)
-   (aldo//scratch-buffer)
-   (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
    (setq tramp-default-method "ssh")
    (setq vc-follow-symlinks t)
    (setq doc-view-resolution 300)
    (setq custom-theme-directory (file-name-as-directory (concat dotspacemacs-directory "themes")))
    (setq x-stretch-cursor t)
+   (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
+   (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
    (put 'dired-find-alternate-file 'disabled nil)
+   ))
 
+(add-hook
+ 'window-setup-hook
+ (lambda ()
+   "Run functions. Run only once at startup and very late after emacs-startup-hook."
+   (aldo//debug-message "window-setup-hook !!!")
+   (blink-cursor-mode 1)
+   (global-vi-tilde-fringe-mode -1)
+   ;; (aldo//scratch-buffer)
+   (aldo//theme-mod)
    (if (display-graphic-p)
        (progn
          (set-fringe-style '(nil . 0))
-         (aldo//set-fringe)
-         (aldo//theme-mod))
+         (aldo//set-fringe))
      (progn
        (load-theme terminal-theme t)))))
 
@@ -41,30 +44,50 @@
  (lambda ()
    (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
    (evil-emacs-state)
-   (blink-cursor-mode 1)))
+   (blink-cursor-mode 1)
+   (aldo//debug-message "theme-change-hook")
+   (aldo//theme-mod)
+   ))
+
+(add-hook
+ 'server-visit-hook
+ (lambda ()
+   (aldo//debug-message "server-visit-hook")
+   ))
 
 (add-hook
  'evil-emacs-state-entry-hook
  (lambda ()
-   ;; (message "state-entry-hook")
+   (aldo//debug-message "state-entry-hook")
    ))
 
 (add-hook
  'find-file-hook
  (lambda ()
-   ;; (message "find-file-hook")
+   (aldo//debug-message "find-file-hook")
    ))
 
 (add-hook
  'change-major-mode-hook
  (lambda ()
-   ;; (message "change-major-mode-hook")
+   (aldo//debug-message "change-major-mode-hook")
    ))
 
 (add-hook
  'markdown-mode-hook
  (lambda ()
    (setq delete-trailing-lines nil)))
+
+(add-hook
+ 'term-exec-hook
+ (lambda ()
+   "Don't ask for confirmation on kill terminal buffer."
+   (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+
+(add-hook
+ 'kill-emacs-query-functions
+ (lambda () (y-or-n-p "Do you really want to exit Emacs? "))
+ 'append)
 
 (add-hook
  'eshell-mode-hook
@@ -80,15 +103,16 @@
 
 (add-to-list
  'after-make-frame-functions
- (lambda (_)
-   ;; (message "after-make-frame-functions")
+ (lambda (new)
+   (aldo//debug-message "after-make-frame-functions")
    (when (server-running-p)
-     (if (not (display-graphic-p _))
+     (if (not (display-graphic-p new))
          (progn
            (setq powerline-default-separator 'utf-8)
            (setq dotspacemacs-mode-line-unicode-symbols nil)
            (spaceline-compile)
-           (load-theme 'monokai t))
+           (load-theme terminal-theme t)
+           (aldo//theme-mod new))
        (progn
          (setq powerline-default-separator 'slant)
          (setq dotspacemacs-mode-line-unicode-symbols 1)
@@ -97,10 +121,11 @@
 
 (add-to-list
  'delete-frame-functions
- (lambda (_)
-   ;; (message "delete-frame-functions")
+ (lambda (selected)
+   (aldo//debug-message "delete-frame-functions")
    (when (server-running-p)
-     (if (not (display-graphic-p _))
+     (let ((other-frame (remove selected (frame-list))))
+     (if (member t (mapcar 'display-graphic-p other-frame))
          (progn
            (setq powerline-default-separator 'slant)
            (setq dotspacemacs-mode-line-unicode-symbols 1)
@@ -110,4 +135,6 @@
          (setq powerline-default-separator 'utf-8)
          (setq dotspacemacs-mode-line-unicode-symbols nil)
          (spaceline-compile)
-         (load-theme 'monokai t))))))
+         (load-theme terminal-theme t)
+         (aldo//theme-mod (car other-frame))
+         ))))))

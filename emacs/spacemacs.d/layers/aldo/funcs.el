@@ -15,8 +15,13 @@ Separate multi line command with \n."
   "Open this layer path in dired buffer."
   (interactive)
   (dired
-   (concat
-    (car dotspacemacs-configuration-layer-path) "aldo")))
+   (concat (car dotspacemacs-configuration-layer-path) "aldo")))
+
+(defun aldo/helm-ff-layer ()
+  (interactive)
+  (helm-find-files-1
+   (file-name-as-directory
+    (concat (car dotspacemacs-configuration-layer-path) "aldo"))))
 
 (defun aldo/toggle-powerline-separator ()
   "Toggle powerline separator between utf-8 and slant."
@@ -51,13 +56,16 @@ Separate multi line command with \n."
 
 ;; Non-interactive functions
 
+(defun aldo//debug-message (msg)
+  (when init-file-debug
+    (message "(aldo) --> %s" msg)))
+
 (defun aldo//scratch-buffer ()
   "Insert recent file list to scratch buffer."
   (unless noninteractive
     (get-buffer "*scratch*")
     (with-current-buffer "*scratch*"
       (let ((spacemacs-buffer-name "*scratch*"))
-        (recentf-mode)
         (insert "\n")
         (insert (format "Welcome back %s!" user-full-name))
         (insert "\n")
@@ -68,7 +76,8 @@ Separate multi line command with \n."
         (spacemacs-buffer/insert-page-break)
         (page-break-lines-mode)
         (local-set-key (kbd "RET") 'widget-button-press)
-        (local-set-key [down-mouse-1] 'widget-button-click))
+        (local-set-key [down-mouse-1] 'widget-button-click)
+        (local-set-key [mouse-2] 'mouse-set-point))
       )))
 
 (defun aldo//set-fringe ()
@@ -106,8 +115,10 @@ Separate multi line command with \n."
     ;;  #b00000000]
     ))
 
-(defun aldo//theme-mod ()
+(defun aldo//theme-mod (&optional frame)
   "Theme modification using built in spacemacs theming layer variable \"theming-modifications\"."
+  (or frame (setq frame (selected-frame)))
+  (aldo//debug-message (format "theme-mod : %s, on : %s" spacemacs--cur-theme frame))
   (setq theming-modifications
         '(;; Daylerees Earthsong
           (theme-light
@@ -152,7 +163,7 @@ Separate multi line command with \n."
   (add-to-list 'theming-modifications
                (list 't
                      '(fringe :background nil)
-                     (list 'spacemacs-emacs-face :background (if (display-graphic-p) "#3c6eb4" "#005faf") :foreground "#ffffff" :inherit 'mode-line)
+                     (list 'spacemacs-emacs-face :background (if (display-graphic-p frame) "#3c6eb4" "#005faf") :foreground "#ffffff" :inherit 'mode-line)
                      '(mode-line-buffer-id :foreground "#e59728" :weight bold)))
   (spacemacs/update-theme)
   )

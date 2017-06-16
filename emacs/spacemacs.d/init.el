@@ -52,10 +52,10 @@ values."
           org-default-notes-file (expand-file-name "notes.org" org-directory)
           org-log-into-drawer "LOGBOOK")
      (shell :variables
-             shell-default-height 30
-             shell-default-position 'bottom
-             shell-default-term-shell "/bin/bash"
-             shell-default-shell 'multiterm)
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-term-shell "/bin/bash"
+            shell-default-shell 'multiterm)
      (python :variables
              python-enable-yapf-format-on-save t
              python-test-runner 'pytest)
@@ -360,13 +360,21 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq spacemacs-buffer--current-note-type nil)
 
-  (defun spacemacs-buffer/goto-buffer (&optional _))
+  (defun spacemacs-buffer/goto-buffer (&optional _)
+    (recentf-mode 1)
+    (when (and (not (buffer-live-p (get-buffer spacemacs-buffer-name)))
+               (fboundp 'aldo//scratch-buffer)) (aldo//scratch-buffer)))
 
   (defun spacemacs-buffer/display-startup-note ())
 
   (defun spacemacs-buffer//startup-hook ())
 
-)
+  (defun spacemacs/check-for-new-version (_ __))
+
+  (defun display-startup-echo-area-message ()
+    (message "This too shall pass."))
+
+  )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -451,5 +459,6 @@ you should place you code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(fringe ((t (:background nil))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))

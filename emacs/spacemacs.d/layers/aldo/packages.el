@@ -1,6 +1,6 @@
 ;;; packages.el --- aldo layer packages file for Spacemacs.
 ;;
-;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
 ;;
 ;; Author: Aldo Ridhoni <aldoridhoni@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -64,7 +64,7 @@
         neo-theme 'arrow)
   (when (member "all-the-icons" (font-family-list))
     (setq neo-theme 'icons))
-  (message "(aldo) --> post-init-neotree"))
+  (aldo//debug-message "(aldo) --> post-init-neotree"))
 
 (defun aldo/post-init-spaceline ()
   (when (display-graphic-p)
@@ -72,18 +72,16 @@
       (setq powerline-default-separator 'slant)
       (setq dotspacemacs-mode-line-unicode-symbols t)
       (spaceline-compile)))
-  (message "(aldo) --> post-init-spaceline"))
+  (aldo//debug-message "(aldo) --> post-init-spaceline"))
 
 (defun aldo/post-init-spacemacs-theme ()
   (setq spacemacs-theme-comment-bg nil))
 
 (spacemacs|do-after-display-system-init
- (setq dotspacemacs-colorize-cursor-according-to-state nil
-       dotspacemacs-startup-banner "~/Pictures/spacemacs-logo.png")
+ (setq dotspacemacs-colorize-cursor-according-to-state nil)
  (when (spacemacs/system-is-mac)
    (setq ns-use-srgb-colorspace nil)
    (load-theme 'leuven t)
-   (modify-frame-parameters nil '((fullscreen . fullboth))))
- (message "(aldo) --> packages.el do-after-display-system-init"))
+   (spacemacs/toggle-frame-fullscreen-non-native)))
 
 ;;; packages.el ends here
