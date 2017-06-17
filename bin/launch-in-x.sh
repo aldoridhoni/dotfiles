@@ -6,4 +6,4 @@ export XDG_SESSION_TYPE=x11
 export WAYLAND_DISPLAY=:0
 export DISPLAY=:0
 
-dbus-launch $1
+dbus-launch "$@"
