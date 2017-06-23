@@ -49,14 +49,18 @@ Separate multi line command with \n."
 (defun aldo/clear-ui ()
   "Toggle UI, good for presentation."
   (interactive)
-  (spacemacs/toggle-mode-line)
-  (spacemacs/toggle-line-numbers)
-  (spacemacs/toggle-which-key))
-
+  (dolist (buf (buffer-list))
+    (when (spacemacs/useful-buffer-p buf)
+      (with-current-buffer buf
+        (spacemacs/toggle-mode-line)
+        (spacemacs/toggle-line-numbers)
+        (spacemacs/toggle-which-key)
+        ))))
 
 ;; Non-interactive functions
 
 (defun aldo//debug-message (msg)
+  "Show message only when run with --debug-init"
   (when init-file-debug
     (message "(aldo) --> %s" msg)))
 
