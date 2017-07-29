@@ -19,8 +19,9 @@
    (setq custom-theme-directory (file-name-as-directory (concat dotspacemacs-directory "themes")))
    (setq x-stretch-cursor t)
    (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
+   (setq shell-file-name "/bin/sh")
    (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
-   (put 'dired-find-alternate-file 'disabled nil)
+   (push "\\*ssh\\*\*" spacemacs-useful-buffers-regexp)
    ))
 
 (add-hook
@@ -92,6 +93,7 @@
 (add-hook
  'eshell-mode-hook
  (lambda ()
+   (message "eshell-mode-hook")
    (eshell/alias "e" "find-file $1")
    (eshell/alias "ff" "find-file $1")
    (eshell/alias "ee" "find-file-other-window $1")
@@ -138,3 +140,8 @@
          (load-theme terminal-theme t)
          (aldo//theme-mod (car other-frame))
          ))))))
+
+;; Kill term buffer when process exit
+(defadvice term-handle-exit
+    (after term-kill-buffer-on-exit activate)
+  (kill-buffer))

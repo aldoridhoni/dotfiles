@@ -30,3 +30,5 @@
   tool = vimdiff
 [code]
   editor = vim
+[core]
+	excludesfile = ~/.gitignore_global
