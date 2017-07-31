@@ -5,16 +5,17 @@
 * Setting Package
 ** Meta Package - Package
 #+BEGIN_SRC emacs-lisp
+(require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
 #+END_SRC
 
 ** Fetch packages-list
 #+BEGIN_SRC emacs-lisp
-(unless package-archive-contents
-  (or (file-exists-p package-user-dir)
-      (package-refresh-contents)))
+(unless (file-exists-p package-user-dir)
+      (package-refresh-contents))
 #+END_SRC
 
 ** Install the missing packages
@@ -32,10 +33,6 @@
   - Require packages
 #+BEGIN_SRC emacs-lisp
 (require 'zoom-frm)
-(require 'helm-config)
-(require 'helm-descbinds)
-(require 'which-key)
-(require 'multi-term)
 #+END_SRC
 
 * Variables
@@ -115,29 +112,55 @@ Aside from =(getenv "HOME")=, we can use tilde.
 
 * Setting Helm
 #+BEGIN_SRC emacs-lisp
-  (helm-descbinds-mode)
-  (setq helm-descbinds-window-style 'split
-        helm-ff-file-name-history-use-recentf t
-        help-window-select t
-        helm-display-header-line nil
-        helm-autoresize-mode 1)
-  (defvar helm-source-header-default-background
-    (face-attribute 'helm-source-header :background))
-  (defvar helm-source-header-default-foreground
-    (face-attribute 'helm-source-header :foreground))
-  (defvar helm-source-header-default-box
-    (face-attribute 'helm-source-header :box))
-  (defvar helm-source-header-default-height
-    (face-attribute 'helm-source-header :height))
+  (use-package helm
+    :ensure t
+    :config
+    (progn
+      (helm-mode)
+      (setq helm-ff-file-name-history-use-recentf t
+            help-window-select t
+            helm-display-header-line nil
+            helm-autoresize-mode 1)
+      ;; (defvar helm-source-header-default-background
+        ;; (face-attribute 'helm-source-header :background))
+      ;; (defvar helm-source-header-default-foreground
+        ;; (face-attribute 'helm-source-header :foreground))
+      ;; (defvar helm-source-header-default-box
+        ;; (face-attribute 'helm-source-header :box))
+      ;; (defvar helm-source-header-default-height
+        ;; (face-attribute 'helm-source-header :height))
+    ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+      (use-package helm-descbinds
+        :ensure t
+        :config
+        (progn
+          (helm-descbinds-mode)
+          (setq helm-descbinds-window-style 'split)))
 #+END_SRC
 
 * Which-Key
 #+BEGIN_SRC emacs-lisp
-  (which-key-mode t)
-  (setq which-key-popup-type 'minibuffer)
-  (setq which-key-idle-delay 0.4)
+  (use-package which-key
+          :ensure t
+          :config
+          (progn
+            (which-key-mode t)
+            (setq which-key-popup-type 'minibuffer
+                  which-key-idle-delay 0.4)))
 #+END_SRC
 
+* Multi-term
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :ensure t
+    :config
+    (setq multi-term-program "fish"
+          multi-term-buffer-name "fish shell* *"
+          multi-term-default-dir 'user-home-real-dir))
+#+END_SRC
 * Programming Language
 ** Python Mode
 ** Rust Mode
@@ -167,8 +190,10 @@ Aside from =(getenv "HOME")=, we can use tilde.
 
 ** Org bullet
 #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (use-package org-bullets
+               :ensure t
+               :config
+               (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
 ** Level remove bold
@@ -236,11 +261,11 @@ Aside from =(getenv "HOME")=, we can use tilde.
     (interactive)
     (let ((multi-term-program "fish")
           (multi-term-buffer-name "fish* *"))
-      (multi-term))
+      (aldo/wrap-real-home 'multi-term nil))
     )
 #+END_SRC
 
-- Hook for multi-term
+- Hook for term-mode
 #+BEGIN_SRC emacs-lisp
   (add-hook 'term-mode-hook (lambda ()
     (setq term-buffer-maximum-size 10000)

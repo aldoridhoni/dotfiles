@@ -3,6 +3,11 @@
 
 ;;; Code:
 
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
 (package-initialize)
 
 (custom-set-variables
@@ -18,7 +23,7 @@
  '(global-reveal-mode t)
  '(package-selected-packages
    (quote
-    (org-bullets typescript-mode company flycheck material-theme monokai-theme which-key web-mode helm-projectile helm-descbinds blank-mode)))
+    (use-package org-bullets typescript-mode company flycheck material-theme monokai-theme which-key web-mode helm-projectile helm-descbinds blank-mode)))
  '(visible-bell t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
