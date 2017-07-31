@@ -71,6 +71,7 @@ values."
      (rust :variables rust-enable-format-on-save t)
      (ibuffer :variables ibuffer-group-buffers-by 'projects)
      (auto-completion :variables
+                      auto-completion-enable-snippets-in-popup t
                       auto-completion-private-snippets-directory
                       (file-name-as-directory
                        (concat dotspacemacs-directory "snippets")))
