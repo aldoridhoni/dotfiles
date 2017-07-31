@@ -18,6 +18,7 @@
     all-the-icons
     all-the-icons-dired
     spacemacs-theme
+    ace-window
     ))
 
 (defun aldo/init-ox-html5slide ()
@@ -76,6 +77,12 @@
 
 (defun aldo/post-init-spacemacs-theme ()
   (setq spacemacs-theme-comment-bg nil))
+
+(defun aldo/post-init-ace-window ()
+  (global-set-key [remap other-window] 'ace-window)
+  (custom-set-faces
+   '(aw-leading-char-face
+     ((t (:inherit ace-jump-face-foreground :height 3.0))))))
 
 (spacemacs|do-after-display-system-init
  (setq dotspacemacs-colorize-cursor-according-to-state nil)

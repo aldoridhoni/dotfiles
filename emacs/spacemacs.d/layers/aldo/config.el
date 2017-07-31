@@ -14,12 +14,17 @@
      (setq spacemacs-buffer-name "*scratch*"))
    (setq initial-buffer-choice (lambda () (get-buffer "*scratch*")))
    (setq tramp-default-method "ssh")
+
+   ;; Follow links
    (setq vc-follow-symlinks t)
+
    (setq doc-view-resolution 300)
    (setq custom-theme-directory (file-name-as-directory (concat dotspacemacs-directory "themes")))
    (setq x-stretch-cursor t)
    (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
    (setq shell-file-name "/bin/sh")
+
+   ;; Don't make this buffer hidden
    (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
    (push "\\*ssh\\*\*" spacemacs-useful-buffers-regexp)
    ))
