@@ -36,3 +36,10 @@
  '(which-key-command-description-face ((t (:foreground "dim gray"))))
 
 (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+
+;; Hack
+;; (setq user-init-file "")
+;; (setq user-emacs-directory "")
+(setq default-directory user-home-real-dir)
+(setenv "HOME" user-home-real-dir)
+;; (load user-init-file)

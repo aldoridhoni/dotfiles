@@ -2,40 +2,8 @@
 #+AUTHOR: Aldo Ridhoni
 #+STARTUP: indent content
 
-* Setting Package
-** Meta Package - Package
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(package-initialize)
-#+END_SRC
-
-** Fetch packages-list
-#+BEGIN_SRC emacs-lisp
-(unless (file-exists-p package-user-dir)
-      (package-refresh-contents))
-#+END_SRC
-
-** Install the missing packages
-#+BEGIN_SRC emacs-lisp
-(dolist (package package-selected-packages)
-  (unless (package-installed-p package)
-    (package-install package)))
-#+END_SRC
-
-** Require
-  - Add lisp folder
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (concat user-emacs-directory "/lisp/"))
-#+END_SRC
-  - Require packages
-#+BEGIN_SRC emacs-lisp
-(require 'zoom-frm)
-#+END_SRC
-
 * Variables
+** Sane initial config
 - Set variables
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-splash-screen t)
@@ -76,6 +44,7 @@ Run after 120 seconds of idle.
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+** Home folder hacks
 - User home folder
 Aside from =(getenv "HOME")=, we can use tilde.
 #+BEGIN_SRC emacs-lisp
@@ -83,53 +52,73 @@ Aside from =(getenv "HOME")=, we can use tilde.
                    (expand-file-name "~")))
 #+END_SRC
 
+- Get real user home directory
+Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
-  (defconst user-home-real-dir (lambda ()
-                         (concat "/home/" user-real-login-name)))
-#+END_SRC
-* Setting Theme
-#+BEGIN_SRC emacs-lisp
-  (defun aldo/theme-hook ()
-    (custom-theme-set-faces
-     'material-light
-     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
-     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
-     '(font-lock-constant-face ((t (:foreground "#7653c1"))))
-     '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
-     '(font-lock-function-name-face ((t (:foreground "#43279a"))))
-     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
-     '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
-     '(font-lock-string-face ((t (:foreground "#bc670f"))))
-     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
-     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
-     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
-     '(set-face-bold-p 'bold nil)
-     )
-    (set-face-attribute 'mode-line nil :background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1"))
-    (set-face-attribute 'linum nil :weight 'normal :height 1.0)
-  )
+  (defconst user-home-real-dir
+    (if (getenv "REAL_HOME")
+        (file-name-as-directory (getenv "REAL_HOME"))
+      (file-name-as-directory
+       (expand-file-name user-real-login-name "/home"))))
 #+END_SRC
 
-* Setting Helm
+
 #+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :ensure t
-    :config
-    (progn
-      (helm-mode)
-      (setq helm-ff-file-name-history-use-recentf t
-            help-window-select t
-            helm-display-header-line nil
-            helm-autoresize-mode 1)
-      ;; (defvar helm-source-header-default-background
-        ;; (face-attribute 'helm-source-header :background))
-      ;; (defvar helm-source-header-default-foreground
-        ;; (face-attribute 'helm-source-header :foreground))
-      ;; (defvar helm-source-header-default-box
-        ;; (face-attribute 'helm-source-header :box))
-      ;; (defvar helm-source-header-default-height
-        ;; (face-attribute 'helm-source-header :height))
-    ))
+  (defconst user-emacs-directory (expand-file-name user-emacs-directory))
+#+END_SRC
+
+- Find-file is abbreviating home directory to "~"
+#+BEGIN_SRC emacs-lisp
+  (setq directory-abbrev-alist
+          (list (cons (concat "\\`" user-home-real-dir) user-home-dir)))
+#+END_SRC
+* Setting Package
+** Meta Package - Package
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
+#+END_SRC
+
+** Fetch packages-list
+#+BEGIN_SRC emacs-lisp
+(unless (file-exists-p package-user-dir)
+      (package-refresh-contents))
+#+END_SRC
+
+** Install the missing packages
+#+BEGIN_SRC emacs-lisp
+(dolist (package package-selected-packages)
+  (unless (package-installed-p package)
+    (package-install package)))
+#+END_SRC
+
+** Setting Helm
+#+BEGIN_SRC emacs-lisp
+    (use-package helm
+      :ensure t
+      :config
+      (progn
+        (helm-mode)
+        (setq helm-ff-file-name-history-use-recentf t
+              help-window-select t
+              helm-display-header-line nil
+              helm-autoresize-mode 1)
+        (defvar helm-source-header-default-background
+           (face-attribute 'helm-source-header :background))
+        (defvar helm-source-header-default-foreground
+          (face-attribute 'helm-source-header :foreground))
+        (defvar helm-source-header-default-box
+          (face-attribute 'helm-source-header :box))
+        (defvar helm-source-header-default-height
+          (face-attribute 'helm-source-header :height))
+        )
+      :bind(("M-x" . helm-M-x)
+            ("C-x b" . helm-mini)
+            ("C-x C-f" . helm-find-files))
+  )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -141,7 +130,7 @@ Aside from =(getenv "HOME")=, we can use tilde.
           (setq helm-descbinds-window-style 'split)))
 #+END_SRC
 
-* Which-Key
+** Which-Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
           :ensure t
@@ -152,7 +141,7 @@ Aside from =(getenv "HOME")=, we can use tilde.
                   which-key-idle-delay 0.4)))
 #+END_SRC
 
-* Multi-term
+** Multi-term
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
     :ensure t
@@ -160,6 +149,17 @@ Aside from =(getenv "HOME")=, we can use tilde.
     (setq multi-term-program "fish"
           multi-term-buffer-name "fish shell* *"
           multi-term-default-dir 'user-home-real-dir))
+#+END_SRC
+
+** Zoom-frm
+
+#+BEGIN_SRC emacs-lisp
+  (use-package zoom-frm
+    :load-path "lisp"
+    :bind (("C-x C-+" . zoom-in/out)
+           ("C-x C--" . zoom-in/out)
+           ("C-x C-=" . zoom-in/out)
+           ("C-x C-0" . zoom-in/out)))
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -170,7 +170,7 @@ Aside from =(getenv "HOME")=, we can use tilde.
 ** Set variables
 #+BEGIN_SRC emacs-lisp
   (setq org-directory (file-name-as-directory
-                        (concat user-home-dir "org"))
+                        (concat user-home-real-dir "org"))
           org-agenda-span 14
           org-agenda-files (file-expand-wildcards (concat org-directory "*.org"))
           org-agenda-prefix-format "  %-17:c%?-12t% s"
@@ -209,31 +209,20 @@ Aside from =(getenv "HOME")=, we can use tilde.
       (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
   )
 #+END_SRC
-
 * Setting Keybindings
-** Helm
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x b") 'helm-mini)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-#+END_SRC
-
 ** Clipboard
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-S-v") 'clipboard-yank)
 #+END_SRC
-
-** Zoom Frame
- #+BEGIN_SRC emacs-lisp
-   (global-set-key (kbd "C-x  C-+") 'zoom-in/out)
-   (global-set-key (kbd "C-x  C--") 'zoom-in/out)
-   (global-set-key (kbd "C-x  C-=") 'zoom-in/out)
-   (global-set-key (kbd "C-x  C-0") 'zoom-in/out)
- #+END_SRC
-
 ** Insert Line Before
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-S-o") 'aldo/insert-line-before)
+#+END_SRC
+
+** Aliases
+- Start of line
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-a") 'back-to-indentation)
 #+END_SRC
 * Custom Functions
 ** Real =HOME= wrapper
@@ -261,7 +250,7 @@ Aside from =(getenv "HOME")=, we can use tilde.
     (interactive)
     (let ((multi-term-program "fish")
           (multi-term-buffer-name "fish* *"))
-      (aldo/wrap-real-home 'multi-term nil))
+         (multi-term))
     )
 #+END_SRC
 
@@ -276,11 +265,19 @@ Aside from =(getenv "HOME")=, we can use tilde.
   ))
 #+END_SRC
 
+- Kill term buffer when process exit
+#+BEGIN_SRC emacs-lisp
+  (defadvice term-handle-exit
+      (after term-kill-buffer-on-exit activate)
+    (kill-buffer))
+#+END_SRC
+
 ** Edit this file
 #+BEGIN_SRC emacs-lisp
   (defun aldo/edit-config ()
     (interactive)
-    (find-file (concat user-emacs-directory "/config.org"))
+    ;; find-file-noselect is wrongly abbreviate filename
+    (find-file (expand-file-name "config.org" user-emacs-directory))
   )
 #+END_SRC
 
@@ -300,7 +297,29 @@ Aside from =(getenv "HOME")=, we can use tilde.
 #+END_SRC
 
 * X Window
-** Do something if using X
+** Setting Theme Hook
+#+BEGIN_SRC emacs-lisp
+  (defun aldo/theme-hook ()
+    (custom-theme-set-faces
+     'material-light
+     '(font-lock-builtin-face ((t (:foreground "#626fc9" :weight normal))))
+     '(font-lock-comment-face ((t (:foreground "#7f7f7f"))))
+     '(font-lock-constant-face ((t (:foreground "#7653c1"))))
+     '(font-lock-doc-face ((t (:foreground "#1a93ae"))))
+     '(font-lock-function-name-face ((t (:foreground "#43279a"))))
+     '(font-lock-keyword-face ((t (:foreground "#6700b9" :weight normal))))
+     '(font-lock-preprocessor-face ((t (:foreground "#434343"))))
+     '(font-lock-string-face ((t (:foreground "#bc670f"))))
+     '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
+     '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
+     '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
+     '(set-face-bold-p 'bold nil)
+     )
+    (set-face-attribute 'mode-line nil :background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1"))
+    (set-face-attribute 'linum nil :weight 'normal :height 1.0)
+  )
+#+END_SRC
+** Do something if in graphic mode
  #+BEGIN_SRC emacs-lisp
    (when window-system
      ;; Scroll-bar

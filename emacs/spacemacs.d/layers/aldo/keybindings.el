@@ -17,3 +17,5 @@
 (global-set-key (kbd "<f7>") 'recentf-open-files)
 
 (global-set-key (kbd "<f6>") 'aldo/helm-ff-layer)
+
+(global-set-key (kbd "C-a") 'back-to-indentation)
