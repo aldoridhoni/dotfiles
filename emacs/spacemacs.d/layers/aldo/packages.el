@@ -88,7 +88,10 @@
  (setq dotspacemacs-colorize-cursor-according-to-state nil)
  (when (spacemacs/system-is-mac)
    (setq ns-use-srgb-colorspace nil)
-   (load-theme 'leuven t)
-   (spacemacs/toggle-frame-fullscreen-non-native)))
+   (setq dotspacemacs-fullscreen-at-startup t)
+   (setq dotspacemacs-maximized-at-startup nil)
+   (set-frame-parameter nil 'fullscreen 'fullscreen)
+   (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+   (load-theme 'leuven t)))
 
 ;;; packages.el ends here

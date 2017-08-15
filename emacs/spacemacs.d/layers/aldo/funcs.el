@@ -46,15 +46,42 @@ Separate multi line command with \n."
   (org-twbs-export-as-html)
   (browse-url-of-buffer))
 
+(defvar in_presentation nil "Used in aldo/clear-ui")
+(defvar-local hide-mode-line nil)
+
+(defun aldo/toggle-clear-ui ()
+  (interactive)
+  (if in_presentation
+        (setq in_presentation nil)
+    (setq in_presentation t))
+  (aldo/clear-ui))
+
+(add-hook 'after-change-major-mode-hook 'aldo/clear-ui)
+
 (defun aldo/clear-ui ()
   "Toggle UI, good for presentation."
   (interactive)
   (dolist (buf (buffer-list))
     (when (spacemacs/useful-buffer-p buf)
       (with-current-buffer buf
-        (spacemacs/toggle-mode-line)
-        (spacemacs/toggle-line-numbers)
-        (spacemacs/toggle-which-key)
+        ;; (spacemacs/toggle-mode-line)
+        ;; (spacemacs/toggle-line-numbers)
+        ;; (spacemacs/toggle-which-key)
+        (if in_presentation
+            (progn
+              (which-key-mode -1)
+              (linum-mode -1)
+              (when mode-line-format
+                (setq hide-mode-line mode-line-format
+                      mode-line-format nil)))
+          ;; else - show it all
+          (which-key-mode)
+          (linum-mode)
+          (when hide-mode-line
+            (setq mode-line-format hide-mode-line
+                  hide-mode-line nil)))
+        (force-mode-line-update)
+        (redraw-display)
         ))))
 
 ;; Non-interactive functions

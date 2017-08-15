@@ -11,6 +11,7 @@
   (setq make-backup-files nil)
   (setq initial-scratch-message nil)
   (setq delete-trailing-lines nil)
+  (menu-bar-mode -1)
 #+END_SRC
 
 - Auto refresh file form disk
@@ -152,7 +153,6 @@ Currently just work on *nix systems.
 #+END_SRC
 
 ** Zoom-frm
-
 #+BEGIN_SRC emacs-lisp
   (use-package zoom-frm
     :load-path "lisp"
@@ -160,6 +160,11 @@ Currently just work on *nix systems.
            ("C-x C--" . zoom-in/out)
            ("C-x C-=" . zoom-in/out)
            ("C-x C-0" . zoom-in/out)))
+#+END_SRC
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
 #+END_SRC
 * Programming Language
 ** Python Mode
@@ -321,21 +326,19 @@ Currently just work on *nix systems.
 #+END_SRC
 ** Do something if in graphic mode
  #+BEGIN_SRC emacs-lisp
-   (when window-system
-     ;; Scroll-bar
-     (toggle-scroll-bar -1)
-     ;; Maximize initial frame
-     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-     ;; Set theme
-     (load-theme 'material-light)
-     (enable-theme 'material-light)
-     (aldo/theme-hook)
-     ;; Hide tool-bar
-     (tool-bar-mode -1)
-     ;; Toggle menu-bar
-     (menu-bar-mode -1)
-     (redraw-display)
-   )
+     (when window-system
+       ;; Scroll-bar
+       (toggle-scroll-bar -1)
+       ;; Maximize initial frame
+       (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+       ;; Set theme
+       (load-theme 'material-light)
+       (enable-theme 'material-light)
+       (aldo/theme-hook)
+       ;; Hide tool-bar
+       (tool-bar-mode -1)
+       (redraw-display)
+     )
  #+END_SRC
 
 ** Load theme hook
