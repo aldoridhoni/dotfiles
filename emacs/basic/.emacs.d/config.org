@@ -6,11 +6,12 @@
 ** Sane initial config
 - Set variables
 #+BEGIN_SRC emacs-lisp
-  (setq inhibit-splash-screen t)
-  (setq require-final-newline t)
-  (setq make-backup-files nil)
-  (setq initial-scratch-message nil)
-  (setq delete-trailing-lines nil)
+  (setq inhibit-splash-screen t
+        require-final-newline t
+        make-backup-files nil
+        initial-scratch-message nil
+        delete-trailing-lines nil
+        server-name "basic")
   (menu-bar-mode -1)
 #+END_SRC
 
@@ -22,12 +23,6 @@
 - Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
-
-- Zone Mode
-Run after 120 seconds of idle.
-#+BEGIN_SRC emacs-lisp
-  (setq zone-timer (run-with-idle-timer 120 t 'zone))
 #+END_SRC
 
 - Window selection in cardinal direction
@@ -45,6 +40,9 @@ Run after 120 seconds of idle.
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
 ** Home folder hacks
 - User home folder
 Aside from =(getenv "HOME")=, we can use tilde.
@@ -338,6 +336,8 @@ Currently just work on *nix systems.
        ;; Hide tool-bar
        (tool-bar-mode -1)
        (redraw-display)
+       ;; Zoning after 120s
+       (setq zone-timer (run-with-idle-timer 120 t 'zone))
      )
  #+END_SRC
 
