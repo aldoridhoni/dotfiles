@@ -7,9 +7,8 @@ Separate multi line command with \n."
         (multi-term-buffer-name "fish* *"))
     (multi-term)
     (when cmd
-      (progn
-        (term-send-raw-string cmd)
-        (term-send-raw-string "\n")))))
+      (term-send-raw-string cmd)
+      (term-send-raw-string "\n"))))
 
 (defun aldo/dired-layer ()
   "Open this layer path in dired buffer."
@@ -52,7 +51,7 @@ Separate multi line command with \n."
 (defun aldo/toggle-clear-ui ()
   (interactive)
   (if in_presentation
-        (setq in_presentation nil)
+      (setq in_presentation nil)
     (setq in_presentation t))
   (aldo/clear-ui))
 
@@ -76,7 +75,7 @@ Separate multi line command with \n."
                       mode-line-format nil)))
           ;; else - show it all
           (which-key-mode)
-          (linum-mode)
+          (aldo//set-linum)
           (when hide-mode-line
             (setq mode-line-format hide-mode-line
                   hide-mode-line nil)))
@@ -85,6 +84,11 @@ Separate multi line command with \n."
         ))))
 
 ;; Non-interactive functions
+
+(defun aldo//set-linum ()
+  (linum-mode (if (or (equal major-mode 'text-mode)
+                      (equal major-mode 'term-mode)
+                      (equal major-mode 'help-mode)) -1 1)))
 
 (defun aldo//debug-message (msg)
   "Show message only when run with --debug-init"
@@ -152,7 +156,7 @@ Separate multi line command with \n."
   (aldo//debug-message (format "theme-mod : %s, on : %s" spacemacs--cur-theme frame))
   (setq theming-modifications
         '(;; Daylerees Earthsong
-          (theme-light
+          (theme-name-light
            (highlight :background "#ffe792" :foreground "#ffffff")
            (region :background "#60A365" :foreground "#ffffff")
            (shadow :foreground "#3b3a32")
@@ -190,11 +194,17 @@ Separate multi line command with \n."
            (font-lock-warning-face :foreground "#F93232")
            )))
 
-  ;; Apply to all themes
+  ;; Apply modification to all themes
   (add-to-list 'theming-modifications
                (list 't
                      '(fringe :background nil)
+                     '(term :background nil :foreground nil)
                      (list 'spacemacs-emacs-face :background (if (display-graphic-p frame) "#3c6eb4" "#005faf") :foreground "#ffffff" :inherit 'mode-line)
                      '(mode-line-buffer-id :foreground "#e59728" :weight bold)))
+  ;; Reset ansi-color
+  (custom-theme-set-variables
+   spacemacs--cur-theme
+   '(ansi-term-color-vector
+     [term term-color-black term-color-red term-color-green term-color-yellow term-color-blue term-color-magenta term-color-cyan term-color-white]))
   (spacemacs/update-theme)
   )

@@ -35,11 +35,12 @@
    "Run functions. Run only once at startup and very late after emacs-startup-hook."
    (aldo//debug-message "window-setup-hook !!!")
    (blink-cursor-mode 1)
-   (global-vi-tilde-fringe-mode -1)
+   (when (fboundp 'global-vi-tilde-fringe-mode)
+     (global-vi-tilde-fringe-mode -1))
    ;; (aldo//scratch-buffer)
-   (aldo//theme-mod)
    (if (display-graphic-p)
        (progn
+         (aldo//theme-mod)
          (set-fringe-style '(nil . 0))
          (aldo//set-fringe))
      (progn
@@ -48,10 +49,10 @@
 (add-hook
  'spacemacs-post-theme-change-hook
  (lambda ()
+   (aldo//debug-message "theme-change-hook")
    (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
    (evil-emacs-state)
    (blink-cursor-mode 1)
-   (aldo//debug-message "theme-change-hook")
    (aldo//theme-mod)
    ))
 
@@ -87,8 +88,15 @@
 (add-hook
  'term-exec-hook
  (lambda ()
-   "Don't ask for confirmation on kill terminal buffer."
+   ;; Don't ask for confirmation on kill terminal buffer.
    (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+
+(add-hook
+ 'term-mode-hook
+ (lambda ()
+   (set-face-background 'term nil)
+   (set-face-foreground 'term nil)
+   (company-mode -1)))
 
 (add-hook
  'kill-emacs-query-functions
@@ -98,7 +106,7 @@
 (add-hook
  'eshell-mode-hook
  (lambda ()
-   (message "eshell-mode-hook")
+   (aldo//debug-message "eshell-mode-hook")
    (eshell/alias "e" "find-file $1")
    (eshell/alias "ff" "find-file $1")
    (eshell/alias "ee" "find-file-other-window $1")
@@ -132,19 +140,19 @@
    (aldo//debug-message "delete-frame-functions")
    (when (server-running-p)
      (let ((other-frame (remove selected (frame-list))))
-     (if (member t (mapcar 'display-graphic-p other-frame))
+       (if (member t (mapcar 'display-graphic-p other-frame))
+           (progn
+             (setq powerline-default-separator 'slant)
+             (setq dotspacemacs-mode-line-unicode-symbols 1)
+             (spaceline-compile)
+             (load-theme (car dotspacemacs-themes) t))
          (progn
-           (setq powerline-default-separator 'slant)
-           (setq dotspacemacs-mode-line-unicode-symbols 1)
+           (setq powerline-default-separator 'utf-8)
+           (setq dotspacemacs-mode-line-unicode-symbols nil)
            (spaceline-compile)
-           (load-theme (car dotspacemacs-themes) t))
-       (progn
-         (setq powerline-default-separator 'utf-8)
-         (setq dotspacemacs-mode-line-unicode-symbols nil)
-         (spaceline-compile)
-         (load-theme terminal-theme t)
-         (aldo//theme-mod (car other-frame))
-         ))))))
+           (load-theme terminal-theme t)
+           (aldo//theme-mod (car other-frame))
+           ))))))
 
 ;; Kill term buffer when process exit
 (defadvice term-handle-exit

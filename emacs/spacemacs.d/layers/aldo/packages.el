@@ -19,6 +19,7 @@
     all-the-icons-dired
     spacemacs-theme
     ace-window
+    recentf
     ))
 
 (defun aldo/init-ox-html5slide ()
@@ -83,6 +84,14 @@
   (custom-set-faces
    '(aw-leading-char-face
      ((t (:inherit ace-jump-face-foreground :height 3.0))))))
+
+(defun aldo/post-init-recentf ()
+  ;; Recent files
+  (setq recentf-max-saved-items 1000
+        recentf-max-menu-items 200
+        recentf-auto-cleanup 'never)
+  (add-to-list 'recentf-exclude "\\elpa\\'")
+  (recentf-cleanup))
 
 (spacemacs|do-after-display-system-init
  (setq dotspacemacs-colorize-cursor-according-to-state nil)
