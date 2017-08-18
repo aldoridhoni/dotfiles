@@ -1,7 +1,5 @@
 # Emacs
-function e
-  command emacsclient $argv
-end
+alias e="command emacsclient"
 
 function em --description 'Run emacsclient in terminal'
   e -t $argv
@@ -33,7 +31,6 @@ if test "$TERM" = "eterm-color" -o \( -n "$EMACS" -a -n "INSIDE_EMACS" \)
   end
 
   function ssh
-    # make-term \"ssh\" \"ssh\" nil \"$argv\"
     eshell-command "ssh $argv"
   end
 

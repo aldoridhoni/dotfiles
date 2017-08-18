@@ -32,7 +32,7 @@ function fish_prompt --description 'Write out the prompt'
      set info $info(set_color yellow)"ssh:"(set_color normal)
    end
 
-   if test 72 -gt (tput cols)
+   if test 72 -gt $COLUMNS
      echo -n -s "$__fish_prompt_cwd" (prompt_pwd) "$__fish_prompt_normal" "$suffix "
      return
    end
