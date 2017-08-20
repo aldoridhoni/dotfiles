@@ -12,17 +12,17 @@
    (aldo//debug-message "emacs-startup-hook")
    (when (boundp 'spacemacs-buffer-name)
      (setq spacemacs-buffer-name "*scratch*"))
+
+   (setq tramp-default-method "ssh"
+         vc-follow-symlinks t
+         doc-view-resolution 300
+         custom-theme-directory (file-name-as-directory (concat dotspacemacs-directory "themes"))
+         x-stretch-cursor t
+         evil-emacs-state-cursor (list my-cursor-color my-cursor-type)
+         shell-file-name "/bin/sh"
+         fringe-mode '(nil . 0))
+
    (setq initial-buffer-choice (lambda () (get-buffer "*scratch*")))
-   (setq tramp-default-method "ssh")
-
-   ;; Follow links
-   (setq vc-follow-symlinks t)
-
-   (setq doc-view-resolution 300)
-   (setq custom-theme-directory (file-name-as-directory (concat dotspacemacs-directory "themes")))
-   (setq x-stretch-cursor t)
-   (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
-   (setq shell-file-name "/bin/sh")
 
    ;; Don't make this buffer hidden
    (push "\\*fish\\*\.\+" spacemacs-useful-buffers-regexp)
@@ -33,26 +33,22 @@
  'window-setup-hook
  (lambda ()
    "Run functions. Run only once at startup and very late after emacs-startup-hook."
+   ;; (aldo//scratch-buffer)
    (aldo//debug-message "window-setup-hook !!!")
-   (blink-cursor-mode 1)
    (when (fboundp 'global-vi-tilde-fringe-mode)
      (global-vi-tilde-fringe-mode -1))
-   ;; (aldo//scratch-buffer)
    (if (display-graphic-p)
        (progn
+         (aldo//set-fringe)
          (aldo//theme-mod)
-         (set-fringe-style '(nil . 0))
-         (aldo//set-fringe))
-     (progn
-       (load-theme terminal-theme t)))))
+         (blink-cursor-mode 1)
+         (set-fringe-mode fringe-mode))
+       (load-theme terminal-theme t))))
 
 (add-hook
  'spacemacs-post-theme-change-hook
  (lambda ()
    (aldo//debug-message "theme-change-hook")
-   (setq evil-emacs-state-cursor (list my-cursor-color my-cursor-type))
-   (evil-emacs-state)
-   (blink-cursor-mode 1)
    (aldo//theme-mod)
    ))
 

@@ -37,20 +37,18 @@
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
 
 (defun aldo/post-init-persp-mode ()
+  (setq persp-add-buffer-on-after-change-major-mode t)
   (spacemacs|define-custom-layout "terminal"
     :binding "t"
     :body
     (aldo/fish-term)
-    (persp-add-buffer)
     (split-window-right)
-    (aldo/fish-term)
-    (persp-add-buffer))
+    (aldo/fish-term))
 
   (spacemacs|define-custom-layout "blog"
     :binding "b"
     :body
     (aldo/fish-term "cd ~/blog\n. venv/bin/activate.fish")
-    (persp-add-buffer)
     ;; (set-window-dedicated-p (get-buffer-window) t)
     (split-window-right)
     (dired "~/blog")
@@ -66,7 +64,7 @@
         neo-theme 'arrow)
   (when (member "all-the-icons" (font-family-list))
     (setq neo-theme 'icons))
-  (aldo//debug-message "(aldo) --> post-init-neotree"))
+  (aldo//debug-message "post-init-neotree"))
 
 (defun aldo/post-init-spaceline ()
   (when (display-graphic-p)
@@ -74,7 +72,7 @@
       (setq powerline-default-separator 'slant)
       (setq dotspacemacs-mode-line-unicode-symbols t)
       (spaceline-compile)))
-  (aldo//debug-message "(aldo) --> post-init-spaceline"))
+  (aldo//debug-message "post-init-spaceline"))
 
 (defun aldo/post-init-spacemacs-theme ()
   (setq spacemacs-theme-comment-bg nil))

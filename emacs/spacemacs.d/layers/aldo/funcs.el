@@ -63,19 +63,16 @@ Separate multi line command with \n."
   (dolist (buf (buffer-list))
     (when (spacemacs/useful-buffer-p buf)
       (with-current-buffer buf
-        ;; (spacemacs/toggle-mode-line)
-        ;; (spacemacs/toggle-line-numbers)
-        ;; (spacemacs/toggle-which-key)
         (if in_presentation
             (progn
               (which-key-mode -1)
-              (linum-mode -1)
+              (spacemacs/no-linum)
               (when mode-line-format
                 (setq hide-mode-line mode-line-format
                       mode-line-format nil)))
           ;; else - show it all
           (which-key-mode)
-          (aldo//set-linum)
+          (aldo//linum-maybe-on)
           (when hide-mode-line
             (setq mode-line-format hide-mode-line
                   hide-mode-line nil)))
@@ -85,15 +82,14 @@ Separate multi line command with \n."
 
 ;; Non-interactive functions
 
-(defun aldo//set-linum ()
-  (linum-mode (if (or (equal major-mode 'text-mode)
-                      (equal major-mode 'term-mode)
-                      (equal major-mode 'help-mode)) -1 1)))
+(defun aldo//linum-maybe-on ()
+  (when (spacemacs/enable-line-numbers-p)
+    (linum-mode 1)))
 
 (defun aldo//debug-message (msg)
   "Show message only when run with --debug-init"
   (when init-file-debug
-    (message "(aldo) --> %s" msg)))
+    (message (propertize "(aldo) --> %s" 'face 'font-lock-constant-face) msg)))
 
 (defun aldo//scratch-buffer ()
   "Insert recent file list to scratch buffer."
@@ -150,9 +146,8 @@ Separate multi line command with \n."
     ;;  #b00000000]
     ))
 
-(defun aldo//theme-mod (&optional frame)
+(defun* aldo//theme-mod (&optional (frame (selected-frame)))
   "Theme modification using built in spacemacs theming layer variable \"theming-modifications\"."
-  (or frame (setq frame (selected-frame)))
   (aldo//debug-message (format "theme-mod : %s, on : %s" spacemacs--cur-theme frame))
   (setq theming-modifications
         '(;; Daylerees Earthsong

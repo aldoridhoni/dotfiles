@@ -13,9 +13,12 @@
 (global-set-key (kbd "C-S-d") 'spacemacs/duplicate-line-or-region)
 (global-set-key (kbd "C-S-v") 'clipboard-yank)
 
+(global-set-key (kbd "<f6>") 'aldo/helm-ff-layer)
+
 ;; set F7 to list recently opened file
 (global-set-key (kbd "<f7>") 'recentf-open-files)
 
-(global-set-key (kbd "<f6>") 'aldo/helm-ff-layer)
+(global-set-key (kbd "<f8>") 'spacemacs/helm-persp-switch-project)
 
+;; Rebind C-a from previous M-m keybind
 (global-set-key (kbd "C-a") 'back-to-indentation)
