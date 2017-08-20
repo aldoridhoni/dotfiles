@@ -2,8 +2,8 @@
 #+AUTHOR: Aldo Ridhoni
 #+STARTUP: indent content
 
-* Variables
-** Sane initial config
+* Initial configuration
+** Sane setup
 - Set variables
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-splash-screen t
@@ -12,12 +12,26 @@
         initial-scratch-message nil
         delete-trailing-lines nil
         server-name "basic")
+#+END_SRC
+
+- Hide menu bar
+#+BEGIN_SRC emacs-lisp
   (menu-bar-mode -1)
+#+END_SRC
+
+- Line highlighting
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode t)
+#+END_SRC
+
+-Line Number
+#+BEGIN_SRC emacs-lisp
+  (global-linum-mode t)
 #+END_SRC
 
 - Auto refresh file form disk
 #+BEGIN_SRC emacs-lisp
-  (setq global-auto-revert-mode 1)
+  (global-auto-revert-mode t)
 #+END_SRC
 
 - Delete trailing whitespace
@@ -40,15 +54,14 @@
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
-#+END_SRC
 ** Home folder hacks
 - User home folder
 Aside from =(getenv "HOME")=, we can use tilde.
 #+BEGIN_SRC emacs-lisp
   (defconst user-home-dir (file-name-as-directory
                    (expand-file-name "~")))
+  (defconst user-emacs-directory (expand-file-name user-emacs-directory))
+  (defconst user-init-file (expand-file-name "init.el" user-emacs-directory))
 #+END_SRC
 
 - Get real user home directory
@@ -61,15 +74,8 @@ Currently just work on *nix systems.
        (expand-file-name user-real-login-name "/home"))))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
-  (defconst user-emacs-directory (expand-file-name user-emacs-directory))
-#+END_SRC
-
-- Find-file is abbreviating home directory to "~"
-#+BEGIN_SRC emacs-lisp
-  (setq directory-abbrev-alist
-          (list (cons (concat "\\`" user-home-real-dir) user-home-dir)))
+(defun abbreviate-file-name (filename) filename)
 #+END_SRC
 * Setting Package
 ** Meta Package - Package
@@ -83,21 +89,21 @@ Currently just work on *nix systems.
 
 ** Fetch packages-list
 #+BEGIN_SRC emacs-lisp
-(unless (file-exists-p package-user-dir)
-      (package-refresh-contents))
+  (unless (file-exists-p package-user-dir)
+        (package-refresh-contents))
 #+END_SRC
 
-** Install the missing packages
+** Install use-packages
 #+BEGIN_SRC emacs-lisp
-(dolist (package package-selected-packages)
-  (unless (package-installed-p package)
-    (package-install package)))
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+  (require 'use-package)
+  (setq use-package-always-ensure t)
 #+END_SRC
 
 ** Setting Helm
 #+BEGIN_SRC emacs-lisp
     (use-package helm
-      :ensure t
       :config
       (progn
         (helm-mode)
@@ -122,7 +128,6 @@ Currently just work on *nix systems.
 
 #+BEGIN_SRC emacs-lisp
       (use-package helm-descbinds
-        :ensure t
         :config
         (progn
           (helm-descbinds-mode)
@@ -132,7 +137,6 @@ Currently just work on *nix systems.
 ** Which-Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
-          :ensure t
           :config
           (progn
             (which-key-mode t)
@@ -143,7 +147,6 @@ Currently just work on *nix systems.
 ** Multi-term
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
-    :ensure t
     :config
     (setq multi-term-program "fish"
           multi-term-buffer-name "fish shell* *"
@@ -161,14 +164,33 @@ Currently just work on *nix systems.
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t)
+  (use-package magit)
+#+END_SRC
+** Restart Emacs
+#+BEGIN_SRC emacs-lisp
+    (use-package restart-emacs
+      :config (progn
+                (defalias 'r 'restart-emacs)
+                (defun restart-emacs--start-gui-using-sh (&optional args)
+                  (call-process (expand-file-name "start.sh" user-home-dir) nil 0 nil))))
+#+END_SRC
+
+** Themes
+#+BEGIN_SRC emacs-lisp
+  (use-package material-theme)
+  (use-package monokai-theme)
 #+END_SRC
 * Programming Language
 ** Python Mode
 ** Rust Mode
 ** Typescript Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package typescript-mode)
+#+END_SRC
 ** Web Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode)
+#+END_SRC
 * Org-mode
 ** Set variables
 #+BEGIN_SRC emacs-lisp
@@ -227,6 +249,11 @@ Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-a") 'back-to-indentation)
 #+END_SRC
+
+** Edit this file kbd
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f6>") 'aldo/edit-config)
+#+END_SRC
 * Custom Functions
 ** Real =HOME= wrapper
 #+BEGIN_SRC emacs-lisp
@@ -279,7 +306,6 @@ Currently just work on *nix systems.
 #+BEGIN_SRC emacs-lisp
   (defun aldo/edit-config ()
     (interactive)
-    ;; find-file-noselect is wrongly abbreviate filename
     (find-file (expand-file-name "config.org" user-emacs-directory))
   )
 #+END_SRC
@@ -316,29 +342,43 @@ Currently just work on *nix systems.
      '(font-lock-type-face ((t (:foreground "#699d36" :slant normal))))
      '(font-lock-variable-name-face ((t (:foreground "#7b8c4d"))))
      '(font-lock-warning-face ((t (:foreground "#f93232" :underline t :slant italic :weight bold))))
+     ;; Org
+     '(org-level-1 ((t (:foreground "#3a81c3" :background nil))))
+     '(org-level-2 ((t (:foreground "#43279a" :background nil))))
+     '(org-level-3 ((t (:foreground "#626fc9" :background nil))))
+     '(org-code ((t (:background nil))))
+     '(org-block-background ((t (:background "#f4f4f4"))))
+     '(org-block-begin-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
+     '(org-block-end-line ((t (:background "#eaeaef" :foreground "#7e7e7e" :box nil :slant italic))) t)
+     ;; Helm
+     '(helm-ff-file ((t (:foreground "#4499ff" :background nil))))
+     '(helm-ff-dotted-directory ((t (:foreground "#121212" :background nil))))
+     '(helm-selection-line ((t (:background "#e8e8e8"))))
      '(set-face-bold-p 'bold nil)
      )
     (set-face-attribute 'mode-line nil :background "#e8e8e8" :foreground "#212121" :box '(:line-width 2 :color "#ECEFF1"))
     (set-face-attribute 'linum nil :weight 'normal :height 1.0)
   )
 #+END_SRC
+
 ** Do something if in graphic mode
  #+BEGIN_SRC emacs-lisp
-     (when window-system
-       ;; Scroll-bar
-       (toggle-scroll-bar -1)
-       ;; Maximize initial frame
-       (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-       ;; Set theme
-       (load-theme 'material-light)
-       (enable-theme 'material-light)
-       (aldo/theme-hook)
-       ;; Hide tool-bar
-       (tool-bar-mode -1)
-       (redraw-display)
-       ;; Zoning after 120s
-       (setq zone-timer (run-with-idle-timer 120 t 'zone))
-     )
+   (when window-system
+     ;; Scroll-bar
+     (toggle-scroll-bar -1)
+     ;; Maximize initial frame
+     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+     (add-to-list 'default-frame-alist '(fullscreen . maximized))
+     ;; Set theme
+     (load-theme 'material-light)
+     (enable-theme 'material-light)
+     (aldo/theme-hook)
+     ;; Hide tool-bar
+     (tool-bar-mode -1)
+     (redraw-display)
+     ;; Zoning after 120s
+     (setq zone-timer (run-with-idle-timer 120 t 'zone))
+   )
  #+END_SRC
 
 ** Load theme hook
@@ -359,3 +399,4 @@ Currently just work on *nix systems.
           (lambda ()
             (message "This too shall pass")))
 #+END_SRC
+

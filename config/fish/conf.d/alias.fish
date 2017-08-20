@@ -14,7 +14,7 @@ function vim --description 'Kill the habit'
   if test "$EDITOR" = "vim"
     command vim $argv
   else
-    em $argv
+    basic -nw $argv
   end
 end
 
