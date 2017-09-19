@@ -23,7 +23,8 @@
   b = branch
   pom = push origin master
   pushall = "!for i in `git remote`; do git push $i; done;"
-  pullall = "!for i in `git remote`; do git pull $i master; done;"
+	pullall = "!for i in `git remote`; do git pull $i master; done;"
+	pullsub = pull --recurse-submodule
 [push]
   default = simple
 [merge]
