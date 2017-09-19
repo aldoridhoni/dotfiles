@@ -60,5 +60,20 @@
 [img-termux]: screenshot/scr-termux-shadow.png
 [link-termux]: screenshot/scr-termux-shadow.png
 
+## Cloning
+First time:
+
+- `git clone 'repo url'`
+
+- `git submodule update --init --recursive --remote`
+
+Already cloned:
+
+- `git pull --recurse-submodules`
+
+or
+
+- `git submodule update --remote`
+
 ### License
 MIT
