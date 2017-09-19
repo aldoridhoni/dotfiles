@@ -16,7 +16,7 @@ end
 
 # emacs-shell
 if test "$TERM" = "eterm-color" -o \( -n "$EMACS" -a -n "INSIDE_EMACS" \)
-  function fish_title; end; funcsave fish_title
+  function fish_title; end;
 
   function man --description 'Open manual in Emacs window'
     e -e "(manual-entry \"$argv\")" > /dev/null
