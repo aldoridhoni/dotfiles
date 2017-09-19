@@ -1,5 +1,6 @@
 # Emacs
 alias e="command emacsclient"
+alias en="e -n"
 
 function em --description 'Run emacsclient in terminal'
   e -t $argv
@@ -19,7 +20,7 @@ if test "$TERM" = "eterm-color" -o \( -n "$EMACS" -a -n "INSIDE_EMACS" \)
   function fish_title; end;
 
   function man --description 'Open manual in Emacs window'
-    e -e "(manual-entry \"$argv\")" > /dev/null
+    e -e "(switch-to-buffer-other-window (manual-entry \"$argv\"))" > /dev/null
   end
 
   function make-term --description 'Run program in term buffer'

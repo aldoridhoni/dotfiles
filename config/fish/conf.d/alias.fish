@@ -1,21 +1,15 @@
 # Aliases
-alias t="command tmux -2 new-session -A -s"
 alias c="command tput clear"
-alias b="c; command tput cup (tput lines)"
 alias py="command env python"
 alias py3="command env python3"
-alias df="command df -H"
-alias free="command free -H"
+alias df="command df -h -T -l -x tmpfs -x devtmpfs"
+alias free="command free -h"
 alias psu="command ps -u $USER -o pid,args"
 alias rm="command rm -i"
 
 # Functions
-function vim --description 'Kill the habit'
-  if test "$EDITOR" = "vim"
-    command vim $argv
-  else
-    basic -nw $argv
-  end
+function b --description 'Natural clear'
+  c; command tput cup (tput lines)
 end
 
 function curly --description 'curl with custom useragent and resume download'
@@ -30,11 +24,6 @@ end
 
 function pl
   command asciinema play $argv
-end
-
-function present
-  set -x THEME 'light'
-  command tmux -2 -L 1 new -A -s "-"
 end
 
 function prambors --description 'Listen to prambors radio using VLC'
