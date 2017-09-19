@@ -1,9 +1,12 @@
 [submodule "emacs"]
 	path = emacs
 	url = git@github.com:aldoridhoni/dot-emacs.git
+	branch = master
 [submodule "tmux"]
 	path = tmux
 	url = git@github.com:aldoridhoni/dot-tmux.git
+	branch = master
 [submodule "vim"]
 	path = vim
 	url = git@github.com:aldoridhoni/dot-vim.git
+	branch = master
