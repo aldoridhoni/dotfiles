@@ -74,9 +74,13 @@ main() {
                 init_fish
                 break
                 ;;
+            bin)
+                init_bin
+                break
+                ;;
             *)
                 echo "Program name is not in list" >&2
-                echo "(atom, emacs/spacemacs, tmux, vim, git, rust)" >&2
+                echo "(atom, emacs/spacemacs, tmux, vim, git, rust, bin)" >&2
                 exit 1
                 ;;
         esac
@@ -145,16 +149,18 @@ function init_spacemacs {
 
 function init_vim {
     install_packages git curl vim
-    mkdir -p $HOME/.vim/bundle
     if [[ "$BACKUP" == "1" ]]; then
         mv $HOME/.vimrc $HOME/.vimrc.bak
     fi
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     action "$(abs vim/vimrc)" $HOME/.vimrc
-    action "$(abs vim/colors)" $HOME/.vim/colors
-    git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
+    for file in vim/*.vim; do
+        action "$(abs $file)" $HOME/.vim/
+    done
     echo "===="
     echo "Starting vim"
-    vim +PluginInstall +qall
+    vim +PlugInstall
 }
 
 function init_tmux {
@@ -178,6 +184,24 @@ function init_fish {
     done
     action "$(abs config/fish/config.fish)" $HOME/.config/fish/config.fish
     echo /usr/local/bin/fish | sudo tee -a /etc/shells
+}
+
+function init_git {
+    if [[ "$BACKUP" == "1" ]]; then
+        mv $HOME/.gitconfig $HOME/.gitconfig.bak
+    fi
+    action "$(abs config/git/config)" $HOME/.gitconfig
+}
+
+function init_rust {
+    curl https://sh.rustup.rs -sSf | sh
+}
+
+function init_bin {
+    for file in bin/*; do
+        mkdir -p $HOME/bin
+        action "$(abs $file)" $HOME/bin/
+    done
 }
 
 main $@
