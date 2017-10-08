@@ -1,35 +1,35 @@
 [user]
-  name = Aldo Ridhoni
-  email = aldoridhoni@gmail.com
+    name = Aldo Ridhoni
+    email = aldoridhoni@gmail.com
 [diff]
 [color]
-  ui = auto
+    ui = auto
 [color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
+    current = yellow reverse
+    local = yellow
+    remote = green
 [color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
 [color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
+    added = yellow
+    changed = green
+    untracked = cyan
 [alias]
-  st = status
-  div = divergence
-  b = branch
-  pom = push origin master
-  pushall = "!for i in `git remote`; do git push $i; done;"
-	pullall = "!for i in `git remote`; do git pull $i master; done;"
-	pullsub = pull --recurse-submodule
+    st = status
+    div = divergence
+    b = branch
+    pom = push origin master
+    pushall = "!for i in `git remote`; do git push $i; done;"
+    pullall = "!for i in `git remote`; do git pull $i master; done;"
+    pullsub = pull --recurse-submodule
 [push]
-  default = simple
+    default = simple
 [merge]
-  tool = vimdiff
+    tool = vimdiff
 [code]
-  editor = vim
+    editor = vim
 [core]
-	excludesfile = ~/.gitignore_global
+    excludesfile = ~/.gitignore_global
