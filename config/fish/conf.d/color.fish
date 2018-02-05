@@ -1,4 +1,4 @@
-if status --is-login; and status --is-interactive
+if status is-login; and status is-interactive
     if test -e '/etc/lsb-release' -o -e '/etc/os-release'
         # GNU/Linux
         set -l dist (command cat /etc/*release 2>/dev/null | head -n1)
@@ -29,33 +29,33 @@ if status --is-login; and status --is-interactive
                 set fish_color_redirection 21a4df
                 exit
         end
+    end
 
-        # Mac
-        if test -e '/System/Library/CoreServices/SystemVersion.plist'
-            set fish_color_cwd e66
-            set fish_color_command aaa
-            set fish_color_param 0af
-            exit
-        end
+    # Mac
+    if test -e '/System/Library/CoreServices/SystemVersion.plist'
+        set fish_color_cwd e66
+        set fish_color_command aaa
+        set fish_color_param 0af
+        exit
+    end
 
-        # Debian
-        if test -e '/etc/debian_version'
-            set fish_color_autosuggestion 555
-            set fish_color_command 005fd7
-            set fish_color_comment 990000
-            set fish_color_cwd e78c45
-            set fish_color_end 009900
-            set fish_color_error ff0000
-            set fish_color_escape 'bryellow' '--bold'
-            set fish_color_param 00afff
-            set fish_color_quote 999900
-            set fish_color_redirection 00afff
-            set fish_color_status e78c45
-            set fish_color_user e78c45
+    # Debian
+    if test -e '/etc/debian_version'
+        set fish_color_autosuggestion 555
+        set fish_color_command 005fd7
+        set fish_color_comment 990000
+        set fish_color_cwd e78c45
+        set fish_color_end 009900
+        set fish_color_error ff0000
+        set fish_color_escape 'bryellow' '--bold'
+        set fish_color_param 00afff
+        set fish_color_quote 999900
+        set fish_color_redirection 00afff
+        set fish_color_status e78c45
+        set fish_color_user e78c45
 
-            # ls color output
-            set LS_COLORS $LS_COLORS'di=38;5;172:'
-            exit
-        end
+        # ls color output
+        set LS_COLORS $LS_COLORS'di=38;5;172:'
+        exit
     end
 end

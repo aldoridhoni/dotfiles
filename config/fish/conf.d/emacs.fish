@@ -1,23 +1,3 @@
-# Emacs
-alias e="command emacsclient"
-alias en="e -n"
-alias em="e -t"
-
-function sem
-    command sudo emacsclient -t $argv
-end
-
-function emc --description 'Run emacs with new frame'
-    e -c -a emacs $argv
-end
-
-function inside_emacs
-    if test "$TERM" = "eterm-color" -o \( -n "$EMACS" -a -n "INSIDE_EMACS" \)
-        return 0
-    end
-    return 1
-end
-
 # emacs-shell
 if inside_emacs
     alias tmux="command tmux -L emacs new-session -A -s" # don't force 256color
