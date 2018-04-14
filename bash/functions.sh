@@ -41,11 +41,27 @@ function settitle () {
 # Calling Prompt
 export PROMPT_COMMAND=prompt_command;
 if [[ "$TERM" =~ 256color ]]; then
-    export PS1='\u@\h ${GREEN}${PS1X}${RESET}${RED}$(git_branch)$(nonzero_return)${RESET}> '
-    export PS2='${GREEN}>${RESET} '
-    export PS4='${GREEN}+${RESET} '
+    export PS1='\u@\h \[${GREEN}\]${PS1X}\[${RESET}\]\[${RED}\]$(git_branch)$(nonzero_return)\[${RESET}\]> '
+    export PS2='\[${GREEN}\]>$\[{RESET}\] '
+    export PS4='\[${GREEN}\]+\[${RESET}\] '
 else
     export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)> '
     export PS2='> '
     export PS4='+ '
 fi
+
+# Update Atom in Fedora
+function update_atom() {
+	ATOM_INSTALLED_VERSION=$(rpm -qi atom | grep "Version" |  cut -d ':' -f 2 | cut -d ' ' -f 2)
+	ATOM_LATEST_VERSION=$(curl -sL "https://api.github.com/repos/atom/atom/releases/latest" | grep -E "https.*atom-amd64.tar.gz" |\
+							  cut -d '"' -f 4 | cut -d '/' -f 8 | sed 's/v//g')
+
+	if [[ $ATOM_INSTALLED_VERSION < $ATOM_LATEST_VERSION ]]; then
+		sudo dnf install -y https://github.com/atom/atom/releases/download/v${ATOM_LATEST_VERSION}/atom.x86_64.rpm
+	fi
+}
+
+# Diff two zip
+function zipdiff() {
+	diff -y <(unzip -l $1) <(unzip -l $2) --suppress-common-lines;
+}
