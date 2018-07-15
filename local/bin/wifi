@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "==> Status"
+nmcli general status
+nmcli device status
+echo "==> Wifi on"
+nmcli radio wifi on
+nmcli device wifi rescan
+nmcli device wifi list
+read -p "==? Connection name (Wifi SSID): " connid
+nmcli connection up id "$connid"
+nmcli connection show --active

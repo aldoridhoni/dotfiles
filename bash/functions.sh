@@ -9,10 +9,16 @@ function nonzero_return() {
 	[ $RETVAL -ne 0 ] && echo " [$RETVAL]"
 }
 
+function command_exists () {
+    command -v "$1" >/dev/null 2>&1;
+}
+
 function git_branch() {
 	if git branch &>/dev/null; then
-		BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
-		echo " ($BRANCH)"
+		if [[ $(git branch) ]]; then
+			BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
+			echo " ($BRANCH)"
+		fi
 	fi
 }
 
@@ -42,7 +48,7 @@ function settitle () {
 export PROMPT_COMMAND=prompt_command;
 if [[ "$TERM" =~ 256color ]]; then
     export PS1='\u@\h \[${GREEN}\]${PS1X}\[${RESET}\]\[${RED}\]$(git_branch)$(nonzero_return)\[${RESET}\]> '
-    export PS2='\[${GREEN}\]>$\[{RESET}\] '
+    export PS2='\[${GREEN}\]>\[${RESET}\] '
     export PS4='\[${GREEN}\]+\[${RESET}\] '
 else
     export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)> '
@@ -64,4 +70,36 @@ function update_atom() {
 # Diff two zip
 function zipdiff() {
 	diff -y <(unzip -l $1) <(unzip -l $2) --suppress-common-lines;
+}
+
+# Inside Emacs
+function ansi_term() {
+	if [[ -v INSIDE_EMACS ]]; then
+		if command_exists toilet; then
+			toilet -f smslant 'emacs'
+		elif command_exists figlet; then
+			figlet -f smslant 'emacs'
+		fi
+	fi
+}; ansi_term
+
+# PATH Manipulation; taken from /etc/profile
+function pathmunge() {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+
+function path() {
+	old=$IFS
+	IFS=:
+	printf "%s\n" $PATH
+	IFS=$old
 }

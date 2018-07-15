@@ -1,3 +1,5 @@
 function dnf
-	command sudo dnf $argv;
+	if command sudo 2>/dev/null
+		command sudo dnf $argv;
+	end
 end

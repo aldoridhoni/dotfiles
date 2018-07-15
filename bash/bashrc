@@ -13,10 +13,19 @@ fi
 [ -f $HOME/dotfiles/bash/alias.sh ] && source $HOME/dotfiles/bash/alias.sh
 
 # add binary PATH
-export PATH=$PATH:$HOME/.bin:$HOME/bin:/$HOME/.local/bin
+[ -d $HOME/.bin ] && pathmunge $HOME/.bin
+[ -d $HOME/bin ] && pathmunge $HOME/bin
+[ -d $HOME/.local/bin ] && pathmunge $HOME/.local/bin
+
+# flatpak bin
+if [ -d /var/lib/flatpak/exports/bin ]; then
+    pathmunge /var/lib/flatpak/exports/bin
+fi
 
 # Rust bin
-export PATH=$PATH:$HOME/.cargo/bin
+if [ -d $HOME/.cargo/bin ]; then
+    pathmunge $HOME/.cargo/bin
+fi
 
 # Python cache
 export PYTHONDONTWRITEBYTECODE=1
@@ -27,11 +36,15 @@ export LANG=en_US.UTF-8
 # Prevent execution of wrong command
 shopt -s histverify
 
-# Search in history - UP & DOWN arrow
-bind '"\e[A":history-search-backward'
-bind '"\e[B":history-search-forward'
+# Not emacs
+if [ ! -v INSIDE_EMACS ]; then
+   # Search in history - UP & DOWN arrow
+   bind '"\e[A":history-search-backward'
+   bind '"\e[B":history-search-forward'
+fi
 
 # History
+shopt -s histappend
 export SAVEHIST=1
 export HISTSIZE=100000
 export HISTFILE=~/.bash_history

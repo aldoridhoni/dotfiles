@@ -1,4 +1,4 @@
-if status is-login; and status is-interactive
+if status is-interactive
     if test -e '/etc/lsb-release' -o -e '/etc/os-release'
         # GNU/Linux
         set -l dist (command cat /etc/*release 2>/dev/null | head -n1)
