@@ -97,8 +97,17 @@ function pathmunge() {
     esac
 }
 
+function remove_dups_path() {
+	# https://unix.stackexchange.com/a/338737
+	local D=${2:-:} path= dir=
+    while IFS= read -d$D dir; do
+        [[ $path$D =~ .*$D$dir$D.* ]] || path+="$D$dir"
+    done <<< "$1$D"
+    printf %s "${path#$D}"
+}
+
 function path() {
-	old=$IFS
+	local old=$IFS
 	IFS=:
 	printf "%s\n" $PATH
 	IFS=$old

@@ -1,0 +1,48 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=10000000
+setopt appendhistory autocd beep nomatch
+bindkey -e
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '~/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+# Basic prompt
+# Enable colors and prompt paremeter expansions
+autoload -U colors && colors
+setopt PROMPT_SUBST
+
+PS1='%n@%m %{$fg[green]%}${PWD/#$HOME/~}%{$reset_color%}%(!.#.>) '
+
+# User specific aliases and functions
+zsh_dir=$(dirname "$(realpath ~/.zshrc)")
+
+[ -f "$zsh_dir/functions" ] && source "$zsh_dir/functions"
+[ -f '$zsh_dir/alias' ] && source "$zsh_dir/alias"
+
+unset zsh_dir
+
+# prevent path dups
+typeset -U path
+
+# add binary PATH
+[ -d $HOME/.bin ] && path+=$HOME/.bin
+[ -d $HOME/bin ] && path+=$HOME/bin
+[ -d $HOME/.local/bin ] && path+=$HOME/.local/bin
+
+# flatpak bin
+if [ -d /var/lib/flatpak/exports/bin ]; then
+    path+=/var/lib/flatpak/exports/bin
+fi
+
+# Rust bin
+if [ -d $HOME/.cargo/bin ]; then
+    path+=$HOME/.cargo/bin
+fi
+
+export PATH

@@ -9,8 +9,12 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-[ -f $HOME/dotfiles/bash/functions.sh ] && source $HOME/dotfiles/bash/functions.sh
-[ -f $HOME/dotfiles/bash/alias.sh ] && source $HOME/dotfiles/bash/alias.sh
+bash_dir=$(dirname "$(realpath ~/.bashrc)")
+
+[ -f "$bash_dir/functions.sh" ] && source "$bash_dir/functions.sh"
+[ -f '$bash_dir/alias.sh' ] && source "$bash_dir/alias.sh"
+
+unset bash_dir
 
 # add binary PATH
 [ -d $HOME/.bin ] && pathmunge $HOME/.bin
@@ -27,11 +31,8 @@ if [ -d $HOME/.cargo/bin ]; then
     pathmunge $HOME/.cargo/bin
 fi
 
-# Python cache
-export PYTHONDONTWRITEBYTECODE=1
-
-# UTF-8
-export LANG=en_US.UTF-8
+# TODO: Not working yet
+PATH=$(remove_dups_path "$PATH")
 
 # Prevent execution of wrong command
 shopt -s histverify
@@ -45,7 +46,7 @@ fi
 
 # History
 shopt -s histappend
-export SAVEHIST=1
+export SAVEHIST=10000000
 export HISTSIZE=100000
 export HISTFILE=~/.bash_history
 
