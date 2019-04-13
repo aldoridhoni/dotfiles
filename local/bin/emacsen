@@ -1,0 +1,9 @@
+#/bin/sh
+flatpak \
+--filesystem=host \
+--device=all \
+--share=network \
+--filesystem=/etc
+--filesystem=/bin
+--filesystem=/sbin
+run -v -v org.gnu.emacs $@

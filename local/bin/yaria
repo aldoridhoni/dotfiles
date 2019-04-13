@@ -1,0 +1,1 @@
+youtube-dl --external-downloader "aria2c" --external-downloader-args "-c -j 3 -x 10 -s 10 -k 1M --summary-interval=0" -o - "$1"

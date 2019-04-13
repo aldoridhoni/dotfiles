@@ -1,0 +1,9 @@
+#!/bin/bash
+
+link=$(echo "$1" | sed -e "s|twitch.tv/||g")
+if [[ "$link" == *"videos"* ]]; then
+   START="00:00"
+   streamlink --loglevel debug --hls-segment-attempts 10 --hls-start-offset ${2:-$START}  --hls-segment-threads 10 --stream-segment-threads 10 --hds-segment-threads 10 --ringbuffer-size 64M --player "vlc --fullscreen" --title "{title} -!- {author} -!- {category} \$A" "twitch.tv/$link" best
+else
+   streamlink --loglevel debug --hls-segment-attempts 10 --hls-segment-threads 10 --stream-segment-threads 10 --hds-segment-threads 10 --ringbuffer-size 64M --player "vlc --fullscreen" --title "{title} -!- {author} -!- {category} \$A" "twitch.tv/$link" best
+fi
