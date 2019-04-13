@@ -1,3 +1,4 @@
+# -*- mode: shell-script; -*-
 update_current_git_vars() {
     unset __CURRENT_GIT_BRANCH
     unset __CURRENT_GIT_BRANCH_STATUS
@@ -73,24 +74,44 @@ precmd_update_git_vars() {
     fi
 }
 
-function collapse_pwd {
-    # https://unix.stackexchange.com/questions/26844/
-    echo $(sed -e "s|^${HOME}|~|" -e "s:\([^/]\)[^/]*/:\1/:g" <<< ${PWD})
+get_retval() {
+    RETVAL=$?
 }
 
-function path {
+nonzero_return() {
+    [[ $RETVAL -gt 0 ]] && echo -n " [$RETVAL]"
+    unset RETVAL
+}
+
+collapse_pwd() {
+    # https://unix.stackexchange.com/questions/26844/
+    echo -n $(sed -e "s|^${HOME}|~|" -e "s:\([^/]\)[^/]*/:\1/:g" <<< ${PWD})
+}
+
+path() {
     print -l ${(s.:.)PATH};
 }
 
 prompt () {
-    autoload -Uz add-zsh-hook
-    add-zsh-hook preexec preexec_update_git_vars
-    add-zsh-hook precmd precmd_update_git_vars
-    add-zsh-hook chpwd chpwd_update_git_vars
-
     setopt PROMPT_SUBST
     autoload -U colors && colors
-    PS1='%n@%m %{$fg[green]%}$(collapse_pwd)%{$reset_color%}%{$fg[red]%}$(prompt_git_info)%{$reset_color%}%(!.#.>) '
+    PS1='%n@%m %{$fg[green]%}$(collapse_pwd)%{$reset_color%}%{$fg[red]%}$(prompt_git_info)$(nonzero_return)%{$reset_color%}%(!.#.>) '
 }
 
-precmd_functions+=(prompt)
+preexec_funcs() {
+    get_retval
+    preexec_update_git_vars
+}
+
+precmd_funcs() {
+    get_retval
+    precmd_update_git_vars
+    prompt
+}
+
+chpwd_functions+=(chpwd_update_git_vars)
+preexec_functions+=(preexec_funcs)
+precmd_functions+=(precmd_funcs)
+
+# Initialize first
+update_current_git_vars

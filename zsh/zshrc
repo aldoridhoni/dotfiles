@@ -1,3 +1,4 @@
+# -*- mode: shell-script; -*-
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
@@ -20,7 +21,7 @@ setopt PROMPT_SUBST
 PS1='%n@%m %{$fg[green]%}${PWD/#$HOME/~}%{$reset_color%}%(!.#.>) '
 
 # User specific aliases and functions
-zsh_dir=$(dirname "$(realpath ~/.zshrc)")
+zsh_dir=$(dirname "$(readlink ~/.zshrc)")
 
 [ -f "$zsh_dir/functions" ] && source "$zsh_dir/functions"
 [ -f '$zsh_dir/alias' ] && source "$zsh_dir/alias"
@@ -43,6 +44,11 @@ fi
 # Rust bin
 if [ -d $HOME/.cargo/bin ]; then
     path+=$HOME/.cargo/bin
+fi
+
+# Homebrew
+if [ -d /usr/local/bin ]; then
+    path+=/usr/local/bin
 fi
 
 export PATH
