@@ -1,5 +1,24 @@
+# -*- mode: shell-script; -*-
+# .bash_profile
+# for login shell.
+# eg. ssh, login prompt tty1, bash -l
+# sourced by GDM
+
+###############
+# ENVIRONMENT #
+###############
+
 # Python cache
 export PYTHONDONTWRITEBYTECODE=1
 
 # UTF-8
 export LANG=en_US.UTF-8
+
+
+# Calling bashrc if we are interactive
+test -t 0 && source ~/.bashrc
+
+# Show some art
+if hash toilet &> /dev/null; then
+    toilet -f smslant --metal $HOSTNAME
+fi

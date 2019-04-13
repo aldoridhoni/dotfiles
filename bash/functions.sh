@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-GREEN="$(tput setaf 2)"
-RED="$(tput setaf 1)"
-RESET="$(tput sgr0)"
-
 function nonzero_return() {
-	RETVAL=$?
-	[ $RETVAL -ne 0 ] && echo " [$RETVAL]"
+	[[ $RETVAL -ne 0 ]] && printf " [$RETVAL]"
+	unset RETVAL
 }
 
 function command_exists () {
@@ -14,15 +10,20 @@ function command_exists () {
 }
 
 function git_branch() {
-	if git branch &>/dev/null; then
-		if [[ $(git branch) ]]; then
-			BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
-			echo " ($BRANCH)"
+	if command_exists git; then
+		if git branch &>/dev/null; then
+			if [[ $(git branch) ]]; then
+				local BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
+				printf " ($BRANCH)"
+		 	fi
 		fi
 	fi
 }
 
 function prompt_command() {
+	# get return value
+	RETVAL=$?
+
 	# https://unix.stackexchange.com/questions/26844/
 	PS1X=$(p="${PWD#${HOME}}"
 		   [ "${PWD}" != "${p}" ] && printf "~"
@@ -46,7 +47,12 @@ function settitle () {
 
 # Calling Prompt
 export PROMPT_COMMAND=prompt_command;
-if [[ "$TERM" =~ 256color ]]; then
+if [[ "$TERM" =~ color ]]; then
+	# We assume tput command exist
+	GREEN="$(tput setaf 2)"
+	RED="$(tput setaf 1)"
+	RESET="$(tput sgr0)"
+
     export PS1='\u@\h \[${GREEN}\]${PS1X}\[${RESET}\]\[${RED}\]$(git_branch)$(nonzero_return)\[${RESET}\]> '
     export PS2='\[${GREEN}\]>\[${RESET}\] '
     export PS4='\[${GREEN}\]+\[${RESET}\] '
@@ -58,9 +64,9 @@ fi
 
 # Update Atom in Fedora
 function update_atom() {
-	ATOM_INSTALLED_VERSION=$(rpm -qi atom | grep "Version" |  cut -d ':' -f 2 | cut -d ' ' -f 2)
-	ATOM_LATEST_VERSION=$(curl -sL "https://api.github.com/repos/atom/atom/releases/latest" | grep -E "https.*atom-amd64.tar.gz" |\
-							  cut -d '"' -f 4 | cut -d '/' -f 8 | sed 's/v//g')
+	local ATOM_INSTALLED_VERSION=$(rpm -qi atom | grep "Version" |  cut -d ':' -f 2 | cut -d ' ' -f 2)
+	local ATOM_LATEST_VERSION=$(curl -sL "https://api.github.com/repos/atom/atom/releases/latest" \
+									| grep -E "https.*atom-amd64.tar.gz" | cut -d '"' -f 4 | cut -d '/' -f 8 | sed 's/v//g')
 
 	if [[ $ATOM_INSTALLED_VERSION < $ATOM_LATEST_VERSION ]]; then
 		sudo dnf install -y https://github.com/atom/atom/releases/download/v${ATOM_LATEST_VERSION}/atom.x86_64.rpm
@@ -81,7 +87,8 @@ function ansi_term() {
 			figlet -f smslant 'emacs'
 		fi
 	fi
-}; ansi_term
+}
+ansi_term
 
 # PATH Manipulation; taken from /etc/profile
 function pathmunge() {
