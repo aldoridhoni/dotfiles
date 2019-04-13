@@ -25,6 +25,8 @@
     pushall = "!for i in `git remote`; do git push $i; done;"
     pullall = "!for i in `git remote`; do git pull $i master; done;"
     pullsub = pull --recurse-submodule
+    master = checkout master
+    ck = checkout
 [push]
     default = simple
 [merge]
@@ -32,4 +34,4 @@
 [code]
     editor = vim
 [core]
-    excludesfile = ~/.gitignore_global
+    excludesfile = ~/.gitignore
