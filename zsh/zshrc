@@ -24,7 +24,7 @@ PS1='%n@%m %{$fg[green]%}${PWD/#$HOME/~}%{$reset_color%}%(!.#.>) '
 zsh_dir=$(dirname "$(readlink ~/.zshrc)")
 
 [ -f "$zsh_dir/functions" ] && source "$zsh_dir/functions"
-[ -f '$zsh_dir/alias' ] && source "$zsh_dir/alias"
+[ -f "$zsh_dir/alias" ] && source "$zsh_dir/alias"
 
 unset zsh_dir
 

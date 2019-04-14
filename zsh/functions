@@ -98,20 +98,11 @@ prompt () {
     PS1='%n@%m %{$fg[green]%}$(collapse_pwd)%{$reset_color%}%{$fg[red]%}$(prompt_git_info)$(nonzero_return)%{$reset_color%}%(!.#.>) '
 }
 
-preexec_funcs() {
-    get_retval
-    preexec_update_git_vars
-}
-
-precmd_funcs() {
-    get_retval
-    precmd_update_git_vars
-    prompt
-}
-
 chpwd_functions+=(chpwd_update_git_vars)
-preexec_functions+=(preexec_funcs)
-precmd_functions+=(precmd_funcs)
+preexec_functions+=(preexec_update_git_vars)
+precmd_functions+=(get_retval)
+precmd_functions+=(precmd_update_git_vars)
+precmd_functions+=(prompt)
 
 # Initialize first
 update_current_git_vars

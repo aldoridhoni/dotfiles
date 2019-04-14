@@ -1,0 +1,6 @@
+# -*- mode: shell-script; -*-
+
+alias ls="ls -G"
+alias ll="ls -alh"
+alias c="clear"
+alias psu="ps -au $USER"
