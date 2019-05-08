@@ -1,0 +1,11 @@
+$include /etc/inputrc
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\e[C": forward-char
+"\e[D": backward-char
+
+set colored-stats on
+set visible-stats on
+set completion-ignore-case on
+set show-all-if-ambiguous on
+set show-all-if-unmodified on

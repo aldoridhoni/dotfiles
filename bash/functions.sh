@@ -11,13 +11,41 @@ function command_exists () {
 
 function git_branch() {
 	if command_exists git; then
+		if [[ -f ${BASHRC_DIR}/git-prompt.sh ]]; then
+			source "${BASHRC_DIR}/git-prompt.sh"
+			export GIT_PS1_SHOWDIRTYSTATE=1
+			printf "$(__git_ps1)"
+			return 0
+		fi
 		if git branch &>/dev/null; then
 			if [[ $(git branch) ]]; then
 				local BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
 				printf " ($BRANCH)"
 		 	fi
+			if [[ $(git status) ]]; then
+				local STATUS=$(git status -u no --ignored=no 2>/dev/null)
+				# TODO
+			fi
 		fi
 	fi
+}
+
+function fn_sgr_output() {
+	local _param=$1
+	local _msg=$2
+	echo -en "\e[${_param}m${_msg}\e[0m"
+}
+
+function fn_sgr_fg() {
+	local -i _color=$1
+	local _msg=$2
+	fn_sgr_output "38;5;${_color}" "${_msg}"
+}
+
+function fn_sgr_bg() {
+	local -i _color=$1
+	local _msg=$2
+	fn_sgr_output "48;5;${_color}" "${_msg}"
 }
 
 function prompt_command() {
@@ -47,18 +75,59 @@ function settitle () {
 
 # Calling Prompt
 export PROMPT_COMMAND=prompt_command;
-if [[ "$TERM" =~ color ]]; then
-	# We assume tput command exist
-	GREEN="$(tput setaf 2)"
-	RED="$(tput setaf 1)"
-	RESET="$(tput sgr0)"
 
-    export PS1='\u@\h \[${GREEN}\]${PS1X}\[${RESET}\]\[${RED}\]$(git_branch)$(nonzero_return)\[${RESET}\]> '
-    export PS2='\[${GREEN}\]>\[${RESET}\] '
-    export PS4='\[${GREEN}\]+\[${RESET}\] '
+case $EUID in
+	0) ARROW=$(printf '\U203c\Ufe0e') ;; # ‼
+	*) ARROW=$(printf '\U232a') ;; # 〉
+esac
+
+# Assuming tput is available
+if command_exists tput; then
+	ncolor=$(tput colors 2>/dev/null)
+	RESET=$(tput sgr0)
+	function fn_sgr_fg() {
+		echo "$(tput setaf $1)$2$RESET"
+	}
+
+	function fn_sgr_br() {
+		echo "$(tput setab $1)$2$RESET"
+	}
+
+	COLS=$(tput cols)
+fi
+
+# need to shrink \u@\h at low col number.
+# TODO: calculate at every resize event.
+function return_info() {
+	if [[ -n $COLS && $COLS -lt 20 ]]; then
+	    INFO=":"
+	else
+		INFO="\u@\h"
+	fi
+}
+
+if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
+	# Ansi color space
+	# If using real green & red, not easy to look at with white background.
+	# Also emacs ansi-term only has 8 colors.
+	_RED="1" # real red 196
+	_GREEN="2" # real green 46
+
+	#fn_sgr_output
+	_STANDOUT="3"
+	_RMSO="23"
+	_BLINK="5"
+
+	COLOR_PS1='\u@\h $(fn_sgr_fg $_GREEN "${PS1X}")$(fn_sgr_fg $_RED "$(git_branch)$(nonzero_return)")${ARROW} '
+    COLOR_PS2='$(fn_sgr_fg $_GREEN ${ARROW}) '
+    COLOR_PS4='$(fn_sgr_fg $_GREEN +) '
+
+	export PS1=$COLOR_PS1
+	export PS2=$COLOR_PS2
+	export PS4=$COLOR_PS4
 else
-    export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)> '
-    export PS2='> '
+    export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)\$ '
+    export PS2='\$ '
     export PS4='+ '
 fi
 
@@ -79,22 +148,52 @@ function zipdiff() {
 }
 
 # Inside Emacs
-function ansi_term() {
+function inside_ansi_term() {
 	if [[ -v INSIDE_EMACS ]]; then
+		local version=$(echo $INSIDE_EMACS | tr ',' '\n' | head -n 1)
 		if command_exists toilet; then
-			toilet -f smslant 'emacs'
+			toilet -f pagga -Skt 'Emacs ' $version
 		elif command_exists figlet; then
-			figlet -f smslant 'emacs'
+			figlet -f pagga -Skp 'Emacs ' $version
+		else
+			echo 'Emacs ' $version
 		fi
 	fi
 }
-ansi_term
+inside_ansi_term
+
+function inside_asciinema() {
+	if [[ -v ASCIINEMA_REC ]]; then
+		local BG="$(tput setab 1)" # red
+		local FG="$(tput setaf 7)" # white
+		local BOLD="$(tput bold)"
+		local RESET="$(tput sgr0)"
+		local BLINK="$(tput blink)"
+		local BUTTON="*"
+
+		[ "${BASH_VERSINFO[0]}" -ge 4 ] && \
+			BUTTON="$(printf '\U23fa\Ufe0e')"
+
+		export PS1=$BG$FG$BOLD$BUTTON$BLINK" REC "$RESET" "$PS1
+	fi
+}
+inside_asciinema
+
+function random() {
+	# For integer random use $RANDOM
+	# 2 byte binary from urandom
+	head -c 2 /dev/urandom | xxd -b -g 2 | awk '{print $2; exit}'
+}
+
+function ibeam_cursor() {
+	printf '\033[5 q'
+}
 
 # PATH Manipulation; taken from /etc/profile
 function pathmunge() {
     case ":${PATH}:" in
         *:"$1":*)
-            ;;
+        ;;
         *)
             if [ "$2" = "after" ] ; then
                 PATH=$PATH:$1

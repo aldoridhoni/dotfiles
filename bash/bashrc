@@ -5,19 +5,19 @@
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
+    . /etc/bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-bash_dir=$(dirname "$(realpath ~/.bashrc)")
+BASHRC_DIR=$(dirname "$(realpath ~/.bashrc)")
 
-[ -f "$bash_dir/functions.sh" ] && source "$bash_dir/functions.sh"
-[ -f '$bash_dir/alias.sh' ] && source "$bash_dir/alias.sh"
+[ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
+[ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
 
-unset -v bash_dir
+unset -v
 
 # add binary PATH
 [ -d $HOME/.bin ] && pathmunge $HOME/.bin
@@ -34,16 +34,6 @@ if [ -d $HOME/.cargo/bin ]; then
     pathmunge $HOME/.cargo/bin
 fi
 
-# Not emacs and interactive
-if [ ! -v "INSIDE_EMACS" ] && [ -z "$PS1" ]; then
-   # Search in history - UP & DOWN arrow
-   bind '"\e[A":history-search-backward'
-   bind '"\e[B":history-search-forward'
-fi
-
-# AutoCD: change to folder if no command found. Only in version > 4.
-[ "${BASH_VERSINFO[0]}" -ge 4 ] && shopt -s autocd
-
 # Multi-line command
 shopt -s cmdhist
 
@@ -52,12 +42,16 @@ shopt -s histverify
 
 # History
 shopt -s histappend
-export SAVEHIST=10000000
-export HISTSIZE=100000
+export SAVEHIST=1000000000
+export HISTSIZE=1000000000
+export HISTFILESIZE=-1
 export HISTFILE=~/.bash_history
 
 # History to ignore: history command, preceding space char, duplicates
 export HISTIGNORE="history*:[ \t]*:&"
 
-# TODO: Not working yet
+# Ignore common commands
+export HISTIGNORE="$HISTIGNORE:pwd:ls:cd"
+
+# Path remove duplicates
 export PATH=$(remove_dups_path "$PATH")

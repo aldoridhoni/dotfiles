@@ -19,6 +19,8 @@ export LANG=en_US.UTF-8
 test -t 0 && source ~/.bashrc
 
 # Show some art
-if hash toilet &> /dev/null; then
-    toilet -f smslant --metal $HOSTNAME
+if shopt -q login_shell; then
+    if hash toilet &> /dev/null; then
+        toilet -f smslant --metal $HOSTNAME
+    fi
 fi

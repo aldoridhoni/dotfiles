@@ -1,0 +1,30 @@
+#!/bin/bash
+# Usage: ./twitch drdisrespect 720p
+# or ./twitch https://www.twitch.tv/videos/421432717 25:10
+link=$(echo "$1" | sed -e "s|twitch.tv/||g")
+player="vlc --fullscreen"
+external="--player-external-http"
+external_port="--player-external-http-port="
+
+if [[ "$link" == *"videos"* ]]; then
+    START="00:00"
+    OFFSET="--hls-start-offset ${2:-$START}"
+    QTY="${3:-best}"
+else
+    OFFSET=""
+    QTY="${2:-best}"
+fi
+
+streamlink --loglevel debug \
+              --hls-segment-attempts 10 \
+              --hls-segment-threads 10 \
+              --stream-segment-threads 10 \
+              --hds-segment-threads 10 \
+              --ringbuffer-size 64M \
+              --twitch-disable-hosting \
+              --player "$player" \
+              $OFFSET \
+              $external \
+              ${external_port}8888 \
+              --title "{title} -!- {author} -!- {category} \$A" \
+              "twitch.tv/$link" $QTY

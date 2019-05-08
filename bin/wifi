@@ -8,5 +8,7 @@ nmcli radio wifi on
 nmcli device wifi rescan
 nmcli device wifi list
 read -p "==? Connection name (Wifi SSID): " connid
-nmcli connection up id "$connid"
+nmcli connection up "$connid" --ask
+# or
+nmcli device wifi connect "$connid" --ask
 nmcli connection show --active

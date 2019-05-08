@@ -27,6 +27,7 @@
     pullsub = pull --recurse-submodule
     master = checkout master
     ck = checkout
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 [push]
     default = simple
 [merge]
