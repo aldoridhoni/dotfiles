@@ -17,7 +17,7 @@ BASHRC_DIR=$(dirname "$(realpath ~/.bashrc)")
 [ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
 [ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
 
-unset -v
+unset -v BASHRC_DIR
 
 # add binary PATH
 [ -d $HOME/.bin ] && pathmunge $HOME/.bin
@@ -42,16 +42,17 @@ shopt -s histverify
 
 # History
 shopt -s histappend
-export SAVEHIST=1000000000
-export HISTSIZE=1000000000
-export HISTFILESIZE=-1
-export HISTFILE=~/.bash_history
+SAVEHIST=1000000000
+HISTSIZE=-1
+HISTFILESIZE=-1
+HISTFILE=~/.bash_history
+HISTCONTROL=ignoreboth
 
 # History to ignore: history command, preceding space char, duplicates
-export HISTIGNORE="history*:[ \t]*:&"
+HISTIGNORE="history*:[ \t]*:&"
 
 # Ignore common commands
-export HISTIGNORE="$HISTIGNORE:pwd:ls:cd"
+HISTIGNORE="$HISTIGNORE:pwd:ls:cd"
 
 # Path remove duplicates
-export PATH=$(remove_dups_path "$PATH")
+PATH=$(remove_dups_path "$PATH")

@@ -218,13 +218,12 @@ function clean_backup {
 
 function init_bash {
     action bash/bashrc .bashrc
-
+    curl -fLo "bash/git-prompt.sh" \
+         https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh
 }
 
 function init_zsh {
     action zsh/zshrc .zshrc
-    curl -fLo "bash/git-prompt.sh" \
-         https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh
 }
 
 function init_spacemacs {

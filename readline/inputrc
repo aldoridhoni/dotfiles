@@ -1,11 +1,38 @@
 $include /etc/inputrc
+
+# Arrow up down. Run after something is typed
 "\e[A": history-search-backward
 "\e[B": history-search-forward
+
+# Arrow left right
 "\e[C": forward-char
 "\e[D": backward-char
+
+
+"\e[5C": forward-word
+"\e[5D": backward-word
+
+# Ctrl + arrow
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+# Press tab to cycle thru possible completion
+"\t": menu-complete
+
+"\C-@": set-mark
+"\C-w": kill-region
+"\M-w": copy-region-as-kill
 
 set colored-stats on
 set visible-stats on
 set completion-ignore-case on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
+set horizontal-scroll-mode on
+set bell-style none
+set editing-mode emacs
+set mark-directories on
+set page-completions off
+set input-meta on
+set convert-meta off
+set output-meta on

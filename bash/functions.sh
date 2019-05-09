@@ -30,22 +30,23 @@ function git_branch() {
 	fi
 }
 
+function fn_sgr_end() {
+	echo -en "\e[0m"
+}
+
 function fn_sgr_output() {
 	local _param=$1
-	local _msg=$2
-	echo -en "\e[${_param}m${_msg}\e[0m"
+	echo -en "\e[${_param}m"
 }
 
 function fn_sgr_fg() {
 	local -i _color=$1
-	local _msg=$2
-	fn_sgr_output "38;5;${_color}" "${_msg}"
+	fn_sgr_output "38;5;${_color}"
 }
 
 function fn_sgr_bg() {
 	local -i _color=$1
-	local _msg=$2
-	fn_sgr_output "48;5;${_color}" "${_msg}"
+	fn_sgr_output "48;5;${_color}"
 }
 
 function prompt_command() {
@@ -77,20 +78,24 @@ function settitle () {
 export PROMPT_COMMAND=prompt_command;
 
 case $EUID in
-	0) ARROW=$(printf '\U203c\Ufe0e') ;; # ‼
-	*) ARROW=$(printf '\U232a') ;; # 〉
+	0) ARROW=$(echo -ne '\u203c\ufe0e\c') ;; # ‼
+	*) ARROW=$(echo -ne '\u227b\c') ;; # ≻
 esac
 
 # Assuming tput is available
 if command_exists tput; then
 	ncolor=$(tput colors 2>/dev/null)
-	RESET=$(tput sgr0)
+
+	function fn_sgr_end() {
+		echo -n "$(tput sgr0)"
+	}
+
 	function fn_sgr_fg() {
-		echo "$(tput setaf $1)$2$RESET"
+		echo -n "$(tput setaf $1)"
 	}
 
 	function fn_sgr_br() {
-		echo "$(tput setab $1)$2$RESET"
+		echo -n "$(tput setab $1)"
 	}
 
 	COLS=$(tput cols)
@@ -118,9 +123,9 @@ if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
 	_RMSO="23"
 	_BLINK="5"
 
-	COLOR_PS1='\u@\h $(fn_sgr_fg $_GREEN "${PS1X}")$(fn_sgr_fg $_RED "$(git_branch)$(nonzero_return)")${ARROW} '
-    COLOR_PS2='$(fn_sgr_fg $_GREEN ${ARROW}) '
-    COLOR_PS4='$(fn_sgr_fg $_GREEN +) '
+	COLOR_PS1='\u@\h \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]$(git_branch)$(nonzero_return)\[$(fn_sgr_end)\]${ARROW} '
+    COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
+    COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
 
 	export PS1=$COLOR_PS1
 	export PS2=$COLOR_PS2
