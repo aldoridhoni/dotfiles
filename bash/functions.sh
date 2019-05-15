@@ -5,10 +5,6 @@ function nonzero_return() {
 	unset RETVAL
 }
 
-function command_exists () {
-    command -v "$1" >/dev/null 2>&1;
-}
-
 function git_branch() {
 	if command_exists git; then
 		if [[ -f ${BASHRC_DIR}/git-prompt.sh ]]; then
@@ -21,7 +17,7 @@ function git_branch() {
 			if [[ $(git branch) ]]; then
 				local BRANCH=$(git branch 2>/dev/null | grep \* |  cut -d " " -f 2)
 				printf " ($BRANCH)"
-		 	fi
+			fi
 			if [[ $(git status) ]]; then
 				local STATUS=$(git status -u no --ignored=no 2>/dev/null)
 				# TODO
@@ -52,6 +48,7 @@ function fn_sgr_bg() {
 function prompt_command() {
 	# get return value
 	RETVAL=$?
+	return_info
 
 	# https://unix.stackexchange.com/questions/26844/
 	PS1X=$(p="${PWD#${HOME}}"
@@ -63,6 +60,7 @@ function prompt_command() {
 		   done
 		   printf "${q:1}")
 }
+
 # https://stackoverflow.com/questions/5076127/
 function settitle () {
 	export PREV_COMMAND=${PREV_COMMAND}${@}
@@ -82,6 +80,14 @@ case $EUID in
 	*) ARROW=$(echo -ne '\u227b\c') ;; # ≻
 esac
 
+# Console tty
+if [[ $TERM = 'linux' ]]; then
+	case $EUID in
+		0) ARROW="#" ;;
+		*) ARROW=">" ;;
+	esac
+fi
+
 # Assuming tput is available
 if command_exists tput; then
 	ncolor=$(tput colors 2>/dev/null)
@@ -98,16 +104,20 @@ if command_exists tput; then
 		echo -n "$(tput setab $1)"
 	}
 
-	COLS=$(tput cols)
+	trap 'get_window_size' WINCH
+	function get_window_size() {
+		local -i _WINDOW_X=$(tput lines)
+		local -i _WINDOW_Y=$(tput cols)
+		# echo "\n[resize] ${_WINDOW_X}x${_WINDOW_Y}"
+	}
 fi
 
 # need to shrink \u@\h at low col number.
-# TODO: calculate at every resize event.
 function return_info() {
-	if [[ -n $COLS && $COLS -lt 20 ]]; then
-	    INFO=":"
+	if [[ -n $COLUMNS && $COLUMNS -lt 50 ]]; then
+		INFO=":"
 	else
-		INFO="\u@\h"
+		INFO="$USER@$HOSTNAME"
 	fi
 }
 
@@ -123,24 +133,25 @@ if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
 	_RMSO="23"
 	_BLINK="5"
 
-	COLOR_PS1='\u@\h \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]$(git_branch)$(nonzero_return)\[$(fn_sgr_end)\]${ARROW} '
-    COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
-    COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
+	COLOR_PS1='${INFO} \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+$(git_branch)$(nonzero_return)\[$(fn_sgr_end)\]${ARROW} '
+	COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
+	COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
 
 	export PS1=$COLOR_PS1
 	export PS2=$COLOR_PS2
 	export PS4=$COLOR_PS4
 else
-    export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)\$ '
-    export PS2='\$ '
-    export PS4='+ '
+	export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)\$ '
+	export PS2='\$ '
+	export PS4='+ '
 fi
 
 # Update Atom in Fedora
 function update_atom() {
-	local ATOM_INSTALLED_VERSION=$(rpm -qi atom | grep "Version" |  cut -d ':' -f 2 | cut -d ' ' -f 2)
+	local ATOM_INSTALLED_VERSION=$(rpm -qi atom | grep "Version" | cut -d ':' -f 2 | cut -d ' ' -f 2)
 	local ATOM_LATEST_VERSION=$(curl -sL "https://api.github.com/repos/atom/atom/releases/latest" \
-									| grep -E "https.*atom-amd64.tar.gz" | cut -d '"' -f 4 | cut -d '/' -f 8 | sed 's/v//g')
+					| grep -E "https.*atom-amd64.tar.gz" | cut -d '"' -f 4 | cut -d '/' -f 8 | sed 's/v//g')
 
 	if [[ $ATOM_INSTALLED_VERSION < $ATOM_LATEST_VERSION ]]; then
 		sudo dnf install -y https://github.com/atom/atom/releases/download/v${ATOM_LATEST_VERSION}/atom.x86_64.rpm
@@ -177,7 +188,7 @@ function inside_asciinema() {
 		local BUTTON="*"
 
 		[ "${BASH_VERSINFO[0]}" -ge 4 ] && \
-			BUTTON="$(printf '\U23fa\Ufe0e')"
+			BUTTON="$(echo -ne '\U23fa\Ufe0e')"
 
 		export PS1=$BG$FG$BOLD$BUTTON$BLINK" REC "$RESET" "$PS1
 	fi
@@ -194,27 +205,39 @@ function ibeam_cursor() {
 	printf '\033[5 q'
 }
 
+function less_colors() {
+	export MANPAGER='less -s -M +Gg'
+	export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
+	export LESS_TERMCAP_md=$'\e[1;33m'     # begin blink
+	export LESS_TERMCAP_so=$'\e[01;44;37m' # begin reverse video
+	export LESS_TERMCAP_us=$'\e[01;37m'    # begin underline
+	export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
+	export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
+	export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
+	export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
+}
+
 # PATH Manipulation; taken from /etc/profile
 function pathmunge() {
-    case ":${PATH}:" in
-        *:"$1":*)
-        ;;
-        *)
-            if [ "$2" = "after" ] ; then
-                PATH=$PATH:$1
-            else
-                PATH=$1:$PATH
-            fi
-    esac
+	case ":${PATH}:" in
+		*:"$1":*)
+		;;
+		*)
+			if [ "$2" = "after" ] ; then
+				PATH=$PATH:$1
+			else
+				PATH=$1:$PATH
+			fi
+	esac
 }
 
 function remove_dups_path() {
 	# https://unix.stackexchange.com/a/338737
 	local D=${2:-:} path= dir=
-    while IFS= read -d$D dir; do
-        [[ $path$D =~ .*$D$dir$D.* ]] || path+="$D$dir"
-    done <<< "$1$D"
-    printf %s "${path#$D}"
+	while IFS= read -d$D dir; do
+		[[ $path$D =~ .*$D$dir$D.* ]] || path+="$D$dir"
+	done <<< "$1$D"
+	printf %s "${path#$D}"
 }
 
 function path() {

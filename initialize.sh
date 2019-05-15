@@ -218,6 +218,7 @@ function clean_backup {
 
 function init_bash {
     action bash/bashrc .bashrc
+    action bash/bash_profile .bash_profile
     curl -fLo "bash/git-prompt.sh" \
          https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh
 }
@@ -284,6 +285,7 @@ function init_bin {
     for file in bin/*; do
         action $file .local/bin/
     done
+    echo 'export PATH="$HOME/.local/bin/:$PATH"' >> $TARGET_DIR/.profile
 }
 
 function init_git {

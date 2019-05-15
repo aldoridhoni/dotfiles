@@ -14,9 +14,10 @@ export PYTHONDONTWRITEBYTECODE=1
 # UTF-8
 export LANG=en_US.UTF-8
 
-
 # Calling bashrc if we are interactive
-test -t 0 && source ~/.bashrc
+[[ $- == *i* ]] && [ -t 0 ] \
+    && [ -t 1 ] &&  source ~/.bashrc
+
 
 # Show some art
 if shopt -q login_shell; then
