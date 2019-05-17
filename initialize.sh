@@ -19,8 +19,9 @@ if [[ $# -lt 1 ]]; then
 fi
 
 OPTIND=1
-TARGET_DIR=${PREFIX:-$HOME}
+TARGET_DIR=${TARGET:-$HOME}
 CONFIG_DIR=".config"
+SCRIPTPATH="$(cd "$(dirname "$0")" ; pwd -P)"
 
 while getopts "hcb" opt; do
     case $opt in
@@ -140,6 +141,9 @@ function install_package() {
             pacman)
                 install="-Syu"
                 ;;
+            apk)
+                install="add"
+                ;;
             *)
                 install="install"
                 ;;
@@ -149,7 +153,7 @@ function install_package() {
         echo "============"
         echo "Installing $package"
         # installing nedd previlages
-        if [[ $(id -u) -eq 1 ]]; then
+        if [[ $(id -u) -eq 0 ]]; then
             $pkg_mgr $install $package
         else
             command -v sudo \
@@ -168,9 +172,7 @@ function install_packages() {
 
 function abs() {
     # $1 : relative filename
-    if [ -d "$(dirname "$1")" ]; then
-        echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-    fi
+    echo "${SCRIPTPATH}/$1"
 }
 
 function action() {
@@ -219,7 +221,7 @@ function clean_backup {
 function init_bash {
     action bash/bashrc .bashrc
     action bash/bash_profile .bash_profile
-    curl -fLo "bash/git-prompt.sh" \
+    curl -fLo "${SCRIPTPATH}/bash/git-prompt.sh" \
          https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh
 }
 
@@ -230,8 +232,8 @@ function init_zsh {
 function init_spacemacs {
     install_packages git emacs
     action emacs/spacemacs.d .spacemacs.d
-    git clone https://github.com/syl20bnr/spacemacs .emacs.d
-    pip install --user flake8 autoflake isort anaconda yapf
+    git clone https://github.com/syl20bnr/spacemacs $TARGET_DIR/.emacs.d
+    python3 -m pip install --user flake8 autoflake isort anaconda yapf
     sudo npm install -g tern vmd js-beautify eslint tide typescript tslint
 }
 
@@ -240,11 +242,11 @@ function init_fish {
     action fish/config.fish $CONFIG_DIR/fish/config.fish
 
     for file in fish/conf.d/*.fish; do
-        action $file $CONFIG_DIR/fish/conf.d
+        action $file $CONFIG_DIR/fish/conf.d/
     done
 
     for file in fish/functions/*.fish; do
-        action $file $CONFIG_DIR/fish/functions
+        action $file $CONFIG_DIR/fish/functions/
     done
 
     which fish | sudo tee -a /etc/shells
@@ -252,13 +254,17 @@ function init_fish {
 
 function init_tmux {
     install_package tmux
-    action tmux .tmux
+    for file in tmux/*.conf; do
+        action $file .tmux/
+    done
     action tmux/main.conf .tmux.conf
 }
 
 function init_vim {
     install_packages git curl vim
-    action vim .vim
+    for file in vim/*.vim; do
+        action $file .vim/
+    done
     action vim/vimrc .vimrc
     curl -fLo "$TARGET_DIR/.vim/autoload/plug.vim" --create-dirs \
          https://github.com/junegunn/vim-plug/raw/master/plug.vim
