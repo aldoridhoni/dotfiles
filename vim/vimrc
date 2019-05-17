@@ -1,0 +1,90 @@
+" -*- mode: vimrc; -*-
+" VIMRC
+" reference : vimdoc.sourceforge.net/htmldoc/options.htmlset
+
+" show lines numbers
+set number
+" wrap long lines
+set wrap
+" no Vi-compatible
+set nocompatible
+" default encoding
+set encoding=utf-8
+" always show status line
+set laststatus=2
+" dont show mode
+set noshowmode
+" hide buffer when abandoned
+set hidden
+" a history of ':' commands
+set history=9999
+" hilite line where cursor is
+set cursorline
+" default shell
+set shell=bash
+" backspace remove newline too
+set backspace=indent,eol,start
+" revert buffer
+set autoread
+" use swapfile for buffer
+set swapfile
+" number of spaces
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set smarttab
+" show command at the right most edge
+set showcmd
+" messages options
+set shortmess+=at
+" raise a dialog
+set confirm
+" always show tabline
+set showtabline=2
+
+" turn on syntax hilite
+syntax on
+" file type detection
+filetype on
+
+source ~/.vim/plug.vim
+source ~/.vim/functions.vim
+source ~/.vim/keymaps.vim
+
+" DIFFRENT SCENARIOS
+if has("gui")
+    set guioptions=cemg
+    set guifont=Source\ Code\ Pro\ for\ Powerline
+endif
+
+if has("gui_macvim")
+    set t_Co=256
+    set background=dark
+    set guifont=Source\ Code\ Pro\ for\ Powerline:h15
+    set guioptions=cemg
+endif
+
+if has("macunix")
+    " GVim
+    vmap <C-c> "+yi
+    vmap <C-x> "+c
+    vmap <C-v> c<ESC>"+p
+    imap <C-v> <C-r><C-o>+
+    set clipboard^=unnamedplus
+endif
+
+if has("unix")
+    set background=dark
+endif
+
+if &term =~ '256color'
+    set t_ut=
+    silent color molokai
+endif
+
+if !empty($TMPDIR)
+    set dir=$TMPDIR
+else
+    set dir=/tmp
+endif
