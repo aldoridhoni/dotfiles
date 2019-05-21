@@ -114,10 +114,11 @@ fi
 
 # need to shrink \u@\h at low col number.
 function return_info() {
-	if [[ -n $COLUMNS && $COLUMNS -lt 50 ]]; then
-		INFO=":"
+	if [[ -n $COLUMNS && 72 -gt $COLUMNS ]]; then
+		INFO=""
 	else
 		INFO="$USER@$HOSTNAME"
+		INFO+=" "
 	fi
 }
 
@@ -133,7 +134,13 @@ if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
 	_RMSO="23"
 	_BLINK="5"
 
-	COLOR_PS1='${INFO} \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+	# Calculate this first
+	USER=${USER-$(id -nu)}
+	[[ -z $USER ]] && USER=$(id -nu)
+	HOSTNAME=${HOSTNAME-$(hostname -s)}
+	[[ -z $HOSTNAME ]] && HOSTNAME=$(hostname -s)
+
+	COLOR_PS1='${INFO}\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
 $(git_branch)$(nonzero_return)\[$(fn_sgr_end)\]${ARROW} '
 	COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
 	COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
