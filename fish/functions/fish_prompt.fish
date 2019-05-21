@@ -22,7 +22,10 @@ function fish_prompt --description 'Write out the prompt'
                 set -g __fish_prompt_cwd $fish_prompt_cwd_root
             end
         case '*'
-            set suffix '>'
+            set suffix '≻'
+            if test "$TERM" = "linux"
+                set suffix '>'
+            end
     end
 
     if test -n "$ASCIINEMA_REC"
