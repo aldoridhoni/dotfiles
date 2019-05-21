@@ -64,6 +64,9 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     # Prevent execution of wrong command
     shopt -s histverify
 
+    # Auto cd
+
+
     # History
     shopt -s histappend
     SAVEHIST=1000000000
@@ -78,5 +81,8 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     # Ignore common commands
     HISTIGNORE="$HISTIGNORE:pwd:ls:cd"
 
-
+    if ((BASH_VERSINFO[0] > 4)); then
+        # Auto cd
+        shopt -s autocd
+    fi
 fi
