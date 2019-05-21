@@ -7,7 +7,7 @@ function nonzero_return() {
 
 function git_branch() {
 	if command_exists git; then
-		if [[ -f ${BASHRC_DIR}/git-prompt.sh ]]; then
+		if [[ -f "${BASHRC_DIR}/git-prompt.sh" ]]; then
 			source "${BASHRC_DIR}/git-prompt.sh"
 			export GIT_PS1_SHOWDIRTYSTATE=1
 			printf "$(__git_ps1)"
