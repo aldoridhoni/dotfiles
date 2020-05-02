@@ -174,7 +174,7 @@ function install_package() {
 function install_packages() {
     for package in "$@"; do
         if hash $package &>/dev/null; then
-            # FIXME Some packege use --version
+            # FIXME Some packages use --version
             $package -V
         else
             install_package $package
