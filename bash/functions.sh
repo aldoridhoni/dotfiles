@@ -31,7 +31,7 @@ function git_branch() {
 
 function fn_sgr_output() {
 	local _param=$1
-	echo -en "\e[${_param}m"
+	printf "\e[${_param}m"
 }
 
 
@@ -83,8 +83,8 @@ function settitle () {
 export PROMPT_COMMAND=prompt_command;
 
 case $EUID in
-	0) ARROW=$(echo -ne '\u203c\ufe0e\c') ;; # ‼
-	*) ARROW=$(echo -ne '\u27a4\c') ;; # ➤
+	0) ARROW=$(printf '\u203c\ufe0e') ;; # ‼
+	*) ARROW=$(printf '\u27a4') ;; # ➤
 esac
 
 # Console tty
@@ -100,19 +100,19 @@ if command_exists tput; then
 	ncolor=$(tput colors 2>/dev/null)
 
 	function fn_sgr_end() {
-		echo -n "$(tput sgr0)"
+		printf "$(tput sgr0)"
 	}
 
 	function fn_sgr_fg() {
-		echo -n "$(tput setaf $1)"
+		printf "$(tput setaf $1)"
 	}
 
 	function fn_sgr_br() {
-		echo -n "$(tput setab $1)"
+		printf "$(tput setab $1)"
 	}
 
 	function fn_sgr_bold() {
-		echo -n "$(tput bold)"
+		printf "$(tput bold)"
 	}
 
 	trap 'get_window_size' WINCH
@@ -247,7 +247,7 @@ function inside_asciinema() {
 		local BUTTON="*"
 
 		[ "${BASH_VERSINFO[0]}" -ge 4 ] && \
-			BUTTON="$(echo -ne '\U23fa\Ufe0e')"
+			BUTTON="$(printf '\U23fa\Ufe0e')"
 
 		PS1=$BG$FG$BOLD$BUTTON$BLINK" REC "$RESET" "$PS1
 	fi
@@ -326,7 +326,7 @@ function bytesToHuman() {
         b=$((b / 1024))
         let s++
     done
-    echo "$b$d ${S[$s]}"
+    printf "$b$d ${S[$s]}"
 }
 
 function set_locale_indonesia() {
