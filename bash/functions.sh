@@ -321,8 +321,9 @@ function bytesToHuman() {
 }
 
 function set_locale_indonesia() {
-	export LANG=id_ID.utf8
-    export LC_ALL=id_ID.utf8
-    export LC_TIME=id_ID.utf8
-    export LC_NUMERIC=id_ID.utf8
+	local id=$(locale -a | grep -i ^id_ID.utf)
+	export LANG=$id
+    export LC_ALL=$id
+    export LC_TIME=$id
+    export LC_NUMERIC=$id
 }

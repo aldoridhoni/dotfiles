@@ -111,8 +111,9 @@ if [ -z "$USERBASHRCSOURCED" ]; then
         if locale -a | grep ^id_ID >/dev/null 2>&1 ; then
             set_locale_indonesia
         elif locale -a | grep ^en_US >/dev/null 2>&1; then
-            LANG=en_US.utf8
-            LC_ALL=en_US.utf8
+            local en=$(locale -a | grep -i ^en_US.utf)
+            LANG=$en
+            LC_ALL=$en
         else
             LC_ALL=POSIX
         fi
