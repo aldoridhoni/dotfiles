@@ -35,4 +35,4 @@
 [code]
     editor = vim
 [core]
-    excludesfile = ~/.gitignore
+    excludesfile = ~/.gitignore_global
