@@ -56,7 +56,6 @@ function fn_sgr_bg() {
 function prompt_command() {
 	# get return value
 	RETVAL=$?
-	return_info
 
 	# https://unix.stackexchange.com/questions/26844/
 	PS1X=$(p="${PWD#${HOME}}"
@@ -121,20 +120,30 @@ if command_exists tput; then
 		local -i _WINDOW_X=$(tput lines)
 		local -i _WINDOW_Y=$(tput cols)
 
+		local -i COLUMNS=$_WINDOW_Y
+
 		# tput el1
 		# tput cub $_WINDOW_Y
 		# echo "\n[resize] ${_WINDOW_X}x${_WINDOW_Y}"
 		# kill -ABRT $$
+		update_info
 	}
 fi
 
 # need to shrink \u@\h at low col number.
-function return_info() {
+function update_info() {
+	[[ -z $USER ]] && USER=$(id -nu)
+
+	[[ -z $HOSTNAME ]] && HOSTNAME=$(hostname -s)
+
+
 	if [[ -n $COLUMNS && 72 -gt $COLUMNS ]]; then
-		INFO=""
+		PS_USER=
+		PS_HOSTNAME=
 	else
-		INFO="$COLOR_USER@$COLOR_HOSTNAME"
-		INFO+=" "
+		PS_USER=${USER}@
+		PS_HOSTNAME=${HOSTNAME}
+		PS_HOSTNAME+=" "
 	fi
 }
 
@@ -181,14 +190,14 @@ if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
 	# Ansi color space
 
 	# Calculate this first
-	[[ -z $USER ]] && USER=$(id -nu)
-
-	[[ -z $HOSTNAME ]] && HOSTNAME=$(hostname -s)
 
 	COLOR_USER=$USER
-	COLOR_HOSTNAME="$(fn_sgr_bold)${HOSTNAME}$(fn_sgr_end)"
+	COLOR_HOSTNAME=""
 
-	COLOR_PS1='${INFO}\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+	update_info
+
+	COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
+\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
 $(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
 	COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
 	COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
