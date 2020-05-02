@@ -9,3 +9,4 @@ fishd*
 *~
 .#*
 /vim/autoload
+/bash/git-prompt.sh
