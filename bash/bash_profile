@@ -19,9 +19,9 @@ export PYTHONDONTWRITEBYTECODE=1
 # Show some art
 if shopt -q login_shell; then
     if hash toilet &> /dev/null; then
-        toilet -f smslant --metal $HOSTNAME
+        toilet -t -f smslant --metal $HOSTNAME
     elif hash figlet &> /dev/null; then
-	    figlet -f smslant -c -w $COLUMNS $HOSTNAME
+	    figlet -t -f smslant -c -w $COLUMNS $HOSTNAME
     elif hash banner &> /dev/null; then
         banner "0"
     else
