@@ -50,8 +50,8 @@ alias prevd='cd -'
 alias p='pushd'
 alias o='popd'
 alias testcolor='msgcat --color=test'
-alias open=$(which xdg-open || which gnome-open || which open)
-alias speak=$(which speak-ng || which speak)
+alias open=$(which xdg-open 2>/dev/null|| which gnome-open 2>/dev/null|| which open 2>/dev/null)
+alias speak=$(which speak-ng 2>/dev/null|| which speak 2>/dev/null)
 alias v="vim -u NONE -N -n '+set number' '+syntax enable'"
 alias note="cd ~/Notebook; jupyter notebook --ip=127.0.0.1 --port=7777"
 alias bulan='cal $(date +%m) $(date +%Y)'
