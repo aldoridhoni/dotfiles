@@ -51,4 +51,9 @@ if [ -d /usr/local/bin ]; then
     path+=/usr/local/bin
 fi
 
+# Python pip --user bin
+if [ -d $(python3 -m site --user-base)/bin ]; then
+	path+=$(python3 -m site --user-base)/bin
+fi
+
 export PATH

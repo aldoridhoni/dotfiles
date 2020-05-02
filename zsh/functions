@@ -96,7 +96,10 @@ prompt () {
     setopt PROMPT_SUBST
     autoload -U colors && colors
     user_color='green'; [ $UID -eq 0 ] && user_color='red'
-    suffix='≻'; [ $TERM = 'linux' ] && suffix='>'
+
+    if ! [[ -v suffix ]]; then
+        suffix='➤'; [ $TERM = 'linux' ] && suffix='>'
+    fi
     PS1='%n@%m %{$fg[$user_color]%}$(collapse_pwd)%{$reset_color%}%{$fg[red]%}$(prompt_git_info)$(nonzero_return)%{$reset_color%}%(!.#.${suffix}) '
 }
 
