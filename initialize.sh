@@ -12,11 +12,13 @@ Do the required step to initialize program.
 EOF
 }
 
-if [[ $# -lt 1 ]]; then
-    echo "Argument required!"
-    show_help
-    exit 0
-fi
+selector() {
+    select program in bash zsh emacs fish readline
+    do
+        echo "Initializing" $program
+        main $program
+    done
+}
 
 OPTIND=1
 TARGET_DIR=${TARGET:-$HOME}
@@ -43,7 +45,9 @@ done
 
 shift "$((OPTIND-1))"
 
+
 main() {
+    check_distro
     # TODO : still not iterate over
     for program in "$@"
     do
@@ -107,7 +111,9 @@ main() {
     done
 }
 
+
 function check_distro() {
+    echo "[checking distro]"
     platform=$(uname)
     declare -a pkg_mgrs=("apk" \
                              "apt-get" \
@@ -153,7 +159,8 @@ function install_package() {
         echo "============"
         echo "Installing $package"
         # installing nedd previlages
-        if [[ $(id -u) -eq 0 ]]; then
+        # unless it was brew
+        if [[ $(id -u) -eq 0 ]] || [[ $pkg_mgr == brew ]]; then
             $pkg_mgr $install $package
         else
             command -v sudo \
@@ -166,7 +173,12 @@ function install_package() {
 
 function install_packages() {
     for package in "$@"; do
-        install_package $package
+        if hash $package &>/dev/null; then
+            # FIXME Some packege use --version
+            $package -V
+        else
+            install_package $package
+        fi
     done
 }
 
@@ -211,16 +223,25 @@ function check_dest() {
     fi
 }
 
-function clean_backup {
+function clean_backup() {
     find $TARGET_DIR -type l -name "*~" -delete
+}
+
+function inject_shell_script() {
+    # Similar to action but insert "source filepath"
+
+    source="$(abs "$1")"
+    dest="$TARGET_DIR/$2"
+
+    echo "source \"$source\"" | tee -a "$dest"
 }
 
 #################### ####
 #### INIT FUNCTIONS ####
 
 function init_bash {
-    action bash/bashrc .bashrc
-    action bash/bash_profile .bash_profile
+    inject_shell_script bash/bashrc .bashrc
+    inject_shell_script bash/bash_profile .bash_profile
     curl -fLo "${SCRIPTPATH}/bash/git-prompt.sh" \
          https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh
 }
@@ -238,7 +259,7 @@ function init_spacemacs {
 }
 
 function init_fish {
-    install_package fish
+    install_packages fish
     action fish/config.fish $CONFIG_DIR/fish/config.fish
 
     for file in fish/conf.d/*.fish; do
@@ -253,7 +274,7 @@ function init_fish {
 }
 
 function init_tmux {
-    install_package tmux
+    install_packages tmux
     for file in tmux/*.conf; do
         action $file .tmux/
     done
@@ -295,7 +316,7 @@ function init_bin {
 }
 
 function init_git {
-    install_package git
+    install_packages git
     action git/config .gitconfig
     action git/gitignore .gitignore_global
 }
@@ -314,7 +335,7 @@ function init_vscode {
 }
 
 function init_rust {
-    install_package rust
+    install_packages rust
     curl https://sh.rustup.rs -sSf | sh
 }
 
@@ -329,5 +350,14 @@ function all {
     init_git
 }
 
-check_distro
-main $@
+
+
+if [[ $# -lt 1 ]]; then
+    echo "Argument required!"
+    show_help
+    echo "Select One"
+    echo "========="
+    selector
+else
+    main $@
+fi
