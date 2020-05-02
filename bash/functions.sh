@@ -5,11 +5,14 @@ function nonzero_return() {
 	unset RETVAL
 }
 
+if [[ -f "${BASHRC_DIR}/git-prompt.sh" ]]; then
+   source "${BASHRC_DIR}/git-prompt.sh"
+fi
+
 function git_branch() {
 	if command_exists git; then
-		if [[ -f "${BASHRC_DIR}/git-prompt.sh" ]]; then
-			source "${BASHRC_DIR}/git-prompt.sh"
-			export GIT_PS1_SHOWDIRTYSTATE=1
+		if command_exists __git_ps1; then
+			GIT_PS1_SHOWDIRTYSTATE=1
 			printf "$(__git_ps1)"
 			return 0
 		fi
@@ -26,13 +29,18 @@ function git_branch() {
 	fi
 }
 
-function fn_sgr_end() {
-	echo -en "\e[0m"
-}
-
 function fn_sgr_output() {
 	local _param=$1
 	echo -en "\e[${_param}m"
+}
+
+
+function fn_sgr_end() {
+	fn_sgr_output 0
+}
+
+function fn_sgr_bold() {
+	fn_sgr_output 1
 }
 
 function fn_sgr_fg() {
@@ -77,7 +85,7 @@ export PROMPT_COMMAND=prompt_command;
 
 case $EUID in
 	0) ARROW=$(echo -ne '\u203c\ufe0e\c') ;; # ‼
-	*) ARROW=$(echo -ne '\u227b\c') ;; # ≻
+	*) ARROW=$(echo -ne '\u27a4\c') ;; # ➤
 esac
 
 # Console tty
@@ -104,11 +112,19 @@ if command_exists tput; then
 		echo -n "$(tput setab $1)"
 	}
 
+	function fn_sgr_bold() {
+		echo -n "$(tput bold)"
+	}
+
 	trap 'get_window_size' WINCH
 	function get_window_size() {
 		local -i _WINDOW_X=$(tput lines)
 		local -i _WINDOW_Y=$(tput cols)
+
+		# tput el1
+		# tput cub $_WINDOW_Y
 		# echo "\n[resize] ${_WINDOW_X}x${_WINDOW_Y}"
+		# kill -ABRT $$
 	}
 fi
 
@@ -117,41 +133,68 @@ function return_info() {
 	if [[ -n $COLUMNS && 72 -gt $COLUMNS ]]; then
 		INFO=""
 	else
-		INFO="$USER@$HOSTNAME"
+		INFO="$COLOR_USER@$COLOR_HOSTNAME"
 		INFO+=" "
 	fi
 }
 
+function prompt_jobs() {
+    local jobc
+    while read -r _; do
+        ((jobc++))
+    done < <(jobs -p)
+    if ((jobc > 0)); then
+        printf ' {%d}' "$jobc"
+    fi
+}
+
+function color_prompt() {
+	_RED="1"
+	_GREEN="2"
+	PS1=$COLOR_PS1
+	PS2=$COLOR_PS2
+	PS4=$COLOR_PS4
+	# PS4 is used with set -x
+}
+
+function 256_color_prompt() {
+	_RED="196"
+	_GREEN="46"
+	PS1=$COLOR_PS1
+	PS2=$COLOR_PS2
+	PS4=$COLOR_PS4
+}
+
+function no_color_prompt() {
+	PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)$(prompt_jobs)${ARROW} '
+	PS2='${ARROW} '
+	PS4='+ '
+}
+
+function dollar_prompt() {
+	PS1='\$ '
+	PS2='\$ '
+	PS4='+ '
+}
+
 if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
 	# Ansi color space
-	# If using real green & red, not easy to look at with white background.
-	# Also emacs ansi-term only has 8 colors.
-	_RED="1" # real red 196
-	_GREEN="2" # real green 46
-
-	#fn_sgr_output
-	_STANDOUT="3"
-	_RMSO="23"
-	_BLINK="5"
 
 	# Calculate this first
-	USER=${USER-$(id -nu)}
 	[[ -z $USER ]] && USER=$(id -nu)
-	HOSTNAME=${HOSTNAME-$(hostname -s)}
+
 	[[ -z $HOSTNAME ]] && HOSTNAME=$(hostname -s)
 
+	COLOR_USER=$USER
+	COLOR_HOSTNAME="$(fn_sgr_bold)${HOSTNAME}$(fn_sgr_end)"
+
 	COLOR_PS1='${INFO}\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
-$(git_branch)$(nonzero_return)\[$(fn_sgr_end)\]${ARROW} '
+$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
 	COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
 	COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
-
-	export PS1=$COLOR_PS1
-	export PS2=$COLOR_PS2
-	export PS4=$COLOR_PS4
+	color_prompt
 else
-	export PS1='\u@\h ${PS1X}$(git_branch)$(nonzero_return)\$ '
-	export PS2='\$ '
-	export PS4='+ '
+	no_color_prompt
 fi
 
 # Update Atom in Fedora
@@ -197,7 +240,7 @@ function inside_asciinema() {
 		[ "${BASH_VERSINFO[0]}" -ge 4 ] && \
 			BUTTON="$(echo -ne '\U23fa\Ufe0e')"
 
-		export PS1=$BG$FG$BOLD$BUTTON$BLINK" REC "$RESET" "$PS1
+		PS1=$BG$FG$BOLD$BUTTON$BLINK" REC "$RESET" "$PS1
 	fi
 }
 inside_asciinema
@@ -209,8 +252,11 @@ function random() {
 }
 
 function ibeam_cursor() {
-	printf '\033[5 q'
+	if [[ $TERM != 'linux' ]];then
+		printf '\033[5 q'
+	fi
 }
+ibeam_cursor
 
 function less_colors() {
 	export MANPAGER='less -s -M +Gg'
@@ -252,4 +298,31 @@ function path() {
 	IFS=:
 	printf "%s\n" $PATH
 	IFS=$old
+}
+
+function command_is_busybox() {
+	command_exists "$1" || return 1
+	command_exists "busybox" || return 1
+
+	b=$(basename $(readlink $(which $1)))
+	[[ $b =~ "busybox" ]] || return 1
+}
+
+
+# https://unix.stackexchange.com/questions/44040/a-standard-tool-to-convert-a-byte-count-into-human-kib-mib-etc-like-du-ls1
+function bytesToHuman() {
+    b=${1:-0}; d=''; s=0; S=(Bytes {K,M,G,T,P,E,Z,Y}iB)
+    while ((b > 1024)); do
+        d="$(printf ".%02d" $((b % 1024 * 100 / 1024)))"
+        b=$((b / 1024))
+        let s++
+    done
+    echo "$b$d ${S[$s]}"
+}
+
+function set_locale_indonesia() {
+	export LANG=id_ID.utf8
+    export LC_ALL=id_ID.utf8
+    export LC_TIME=id_ID.utf8
+    export LC_NUMERIC=id_ID.utf8
 }

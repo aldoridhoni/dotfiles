@@ -11,9 +11,6 @@
 # Python cache
 export PYTHONDONTWRITEBYTECODE=1
 
-# UTF-8
-export LANG=en_US.UTF-8
-
 # Calling bashrc if we are interactive
 [[ $- == *i* ]] && [ -t 0 ] \
     && [ -t 1 ] &&  source ~/.bashrc
@@ -23,5 +20,12 @@ export LANG=en_US.UTF-8
 if shopt -q login_shell; then
     if hash toilet &> /dev/null; then
         toilet -f smslant --metal $HOSTNAME
+    elif hash figlet &> /dev/null; then
+	    figlet -f smslant -c -w $COLUMNS $HOSTNAME
+    elif hash banner &> /dev/null; then
+        banner "0"
+    else
+	    # printf '%0.1s' "-"{1..$COLUMNS}
+	    echo "..::SELAMAT DATANG::.."
     fi
 fi

@@ -30,6 +30,7 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36" -v'
 alias e='emacsclient'
 alias em='e -nw'
 alias emc='e -c -a emacs'
+alias emq='emacs -nw -Q -f menu-bar-mode -f global-hl-line-mode -f global-linum-mode --eval="(fset (quote yes-or-no-p) (quote y-or-n-p))" --eval="(progn(setq vc-follow-symlinks t)(load-theme (quote leuven)))"'
 alias less='less --quit-if-one-screen --line-numbers --no-init'
 alias prambors='cvlc -q http://masima.rastream.com/masima-pramborsjakarta'
 alias sdnf='sudo dnf'
@@ -45,3 +46,12 @@ alias pipu='pip --user --upgrade'
 alias j='jmacs'
 alias ff='firefox'
 alias spool='ff localhost:631'
+alias prevd='cd -'
+alias p='pushd'
+alias o='popd'
+alias testcolor='msgcat --color=test'
+alias open=$(which xdg-open || which gnome-open || which open)
+alias speak=$(which speak-ng || which speak)
+alias v="vim -u NONE -N -n '+set number' '+syntax enable'"
+alias note="cd ~/Notebook; jupyter notebook --ip=127.0.0.1 --port=7777"
+alias bulan='cal $(date +%m) $(date +%Y)'

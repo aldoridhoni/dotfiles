@@ -13,11 +13,16 @@ if [ -z "$USERBASHRCSOURCED" ]; then
         . /etc/bashrc
     fi
 
+    # Source user aliases
+    if [ -f ~/.bash_aliases ]; then
+        . ~/.bash_aliases
+    fi
+
     # Uncomment the following line if you don't like systemctl's auto-paging feature:
     # export SYSTEMD_PAGER=
 
     function command_exists () {
-	    command -v "$1" >/dev/null 2>&1;
+	    builtin command -v "$1" >/dev/null 2>&1 || return 1;
     }
 
     # User specific aliases and functions
@@ -50,6 +55,13 @@ if [ -z "$USERBASHRCSOURCED" ]; then
         fi
     fi
 
+    if command_exists python3; then
+	    # add Python pip --user bin
+	    if [ -d $(python3 -m site --user-base)/bin ]; then
+	        pathmunge $(python3 -m site --user-base)/bin
+	    fi
+    fi
+
     if command_exists remove_dups_path; then
        # Path remove duplicates
        PATH=$(remove_dups_path "$PATH")
@@ -64,9 +76,6 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     # Prevent execution of wrong command
     shopt -s histverify
 
-    # Auto cd
-
-
     # History
     shopt -s histappend
     SAVEHIST=1000000000
@@ -75,14 +84,37 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     HISTFILE=~/.bash_history
     HISTCONTROL=ignoreboth
 
-    # History to ignore: history command, preceding space char, duplicates
-    HISTIGNORE="history*:[ \t]*:&"
+    # History to ignore: history command, duplicates
+    HISTIGNORE="history*:&"
 
     # Ignore common commands
     HISTIGNORE="$HISTIGNORE:pwd:ls:cd"
 
-    if ((BASH_VERSINFO[0] > 4)); then
+    if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
         # Auto cd
         shopt -s autocd
+
+    fi
+
+    if [ "${BASH_VERSINFO[0]}" -eq 4 -a "${BASH_VERSINFO[1]}" -lt 3 ]; then
+        # Bash version below 4.3
+        HISTSIZE=
+        HISTFILESIZE=
+    fi
+
+
+    # Disable flow control
+    stty -ixon
+
+    # Language to Indonesian
+    if [ -z $LC_ALL ] && [ -z $LANG ]; then
+        if locale -a | grep ^id_ID >/dev/null 2>&1 ; then
+            set_locale_indonesia
+        elif locale -a | grep ^en_US >/dev/null 2>&1; then
+            LANG=en_US.utf8
+            LC_ALL=en_US.utf8
+        else
+            LC_ALL=POSIX
+        fi
     fi
 fi
