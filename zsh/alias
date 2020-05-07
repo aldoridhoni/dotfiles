@@ -3,6 +3,6 @@
 alias ls="ls -G"
 alias ll="ls -alh"
 alias c="clear"
-alias b="c, tput cup $(tput lines)"
+alias b="c; tput cup $(tput lines)"
 alias psu="ps -au $USER"
 alias g="git"
