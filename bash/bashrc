@@ -64,6 +64,14 @@ if [ -z "$USERBASHRCSOURCED" ]; then
 	    fi
     fi
 
+    # Golang Path
+    if [ -d ~/.go ]; then
+        if [ -z $GOPATH ]; then
+            export GOPATH="$HOME/.go"
+            pathmunge $HOME/.go/bin
+        fi
+    fi
+
     if command_exists remove_dups_path; then
        # Path remove duplicates
        PATH=$(remove_dups_path "$PATH")
