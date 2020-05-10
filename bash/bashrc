@@ -26,17 +26,19 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     }
 
     # User specific aliases and functions
-    if command_exists realpath; then
-        BASHRC_PATH=$(realpath ~/.bashrc)
-    else
-        BASHRC_PATH=$(readlink ~/.bashrc)
+    if [ -h ~/.bashrc ]; then
+        if command_exists realpath; then
+            BASHRC_PATH=$(realpath ~/.bashrc)
+        else
+            BASHRC_PATH=$(readlink ~/.bashrc)
+        fi
+        BASHRC_DIR=$(dirname "$BASHRC_PATH")
+
+        [ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
+        [ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
+
+        unset -v BASHRC_PATH
     fi
-    BASHRC_DIR=$(dirname "$BASHRC_PATH")
-
-    [ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
-    [ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
-
-    unset -v BASHRC_PATH
 
     if command_exists pathmunge; then
         # add binary PATH
