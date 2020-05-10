@@ -393,3 +393,11 @@ vterm_cmd() {
 find-file() {
     vterm_cmd find-file "$(realpath "$@")"
 }
+
+screen-record() {
+	# Record screen with ffmpeg
+	if command_exists xrandr; then
+		ffmpeg -video_size $(xrandr | grep "*+" | awk '{print $1; exit}') \
+			   -framerate 25 -f x11grab -i ${DISPLAY} output-$(date +%s).mp4
+	fi
+}
