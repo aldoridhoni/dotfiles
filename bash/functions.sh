@@ -186,25 +186,35 @@ function dollar_prompt() {
 	PS4='+ '
 }
 
-if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
-	# Ansi color space
+# Check term type
+case "$TERM" in
+    "dumb")
+        export PS1="> "
+        ;;
+    xterm*|rxvt*|eterm*|screen*)
+        if [[ $TERM =~ color ]] || [[ -n $ncolor && $ncolor -ge 8 ]]; then
+			# Ansi color space
 
-	# Calculate this first
+			# Calculate this first
 
-	COLOR_USER=$USER
-	COLOR_HOSTNAME=""
+			COLOR_USER=$USER
+			COLOR_HOSTNAME=""
 
-	update_info
+			update_info
 
-	COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
+			COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
 \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
 $(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
-	COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
-	COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
-	color_prompt
-else
-	no_color_prompt
-fi
+			COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
+			COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
+			color_prompt
+		else
+			no_color_prompt
+		fi
+        ;;
+esac
+
+
 
 # Update Atom in Fedora
 function update_atom() {
