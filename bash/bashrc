@@ -55,6 +55,14 @@ if [ -z "$USERBASHRCSOURCED" ]; then
         if [ -d $HOME/.cargo/bin ]; then
             pathmunge $HOME/.cargo/bin
         fi
+
+            # Golang Path
+        if [ -d ~/.go ]; then
+            if [ -z $GOPATH ]; then
+                export GOPATH="$HOME/.go"
+                pathmunge $GOPATH/bin
+            fi
+        fi
     fi
 
     if command_exists python3; then
@@ -64,13 +72,6 @@ if [ -z "$USERBASHRCSOURCED" ]; then
 	    fi
     fi
 
-    # Golang Path
-    if [ -d ~/.go ]; then
-        if [ -z $GOPATH ]; then
-            export GOPATH="$HOME/.go"
-            pathmunge $HOME/.go/bin
-        fi
-    fi
 
     if command_exists remove_dups_path; then
        # Path remove duplicates
