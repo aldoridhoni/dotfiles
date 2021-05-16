@@ -30,9 +30,9 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36" -v'
 alias e='emacsclient'
 alias em='e -nw'
 alias emc='e -c -a emacs'
-alias emq='emacs -nw -Q -f menu-bar-mode -f global-hl-line-mode -f global-linum-mode --eval="(fset (quote yes-or-no-p) (quote y-or-n-p))" --eval="(progn(setq vc-follow-symlinks t)(load-theme (quote leuven)))"'
+alias emq='emacs -nw -Q -f menu-bar-mode -f global-hl-line-mode -f global-linum-mode --eval="(fset (quote yes-or-no-p) (quote y-or-n-p))" --eval="(progn(setq vc-follow-symlinks t)(load-theme (quote leuven)))" --eval="(setq make-backup-files nil)"'
 alias less='less --quit-if-one-screen --line-numbers --no-init'
-alias prambors='cvlc -q http://masima.rastream.com/masima-pramborsjakarta'
+alias prambors='mpv --vo=null https://22283.live.streamtheworld.com/PRAMBORS_FM.mp3'
 alias sdnf='sudo dnf'
 alias szypper='sudo zypper'
 alias sapt='sudo apt'
@@ -42,7 +42,7 @@ alias wanip4opendns='dig @resolver1.opendns.com A myip.opendns.com +short -4'
 alias wanip4akamai='dig @ns1-1.akamaitech.net ANY whoami.akamai.net +short -4'
 alias wanipgoogle='dig @ns1.google.com TXT o-o.myaddr.l.google.com +short'
 alias pip='python3 -m pip'
-alias pipu='pip --user --upgrade'
+alias pipu='pip install --upgrade --user'
 alias j='jmacs'
 alias ff='firefox'
 alias spool='ff localhost:631'
@@ -55,3 +55,9 @@ alias speak=$(which speak-ng 2>/dev/null|| which speak 2>/dev/null)
 alias v="vim -u NONE -N -n '+set number' '+syntax enable'"
 alias note="cd ~/Notebook; jupyter notebook --ip=127.0.0.1 --port=7777"
 alias bulan='cal $(date +%m) $(date +%Y)'
+alias playt="mpv --ytdl-format='bestvideo[height<=?1440]+bestaudio/best'"
+alias gmount="gio mount"
+alias gumount="gio mount -u"
+alias pulseaudio-volume-control="pavucontrol"
+alias icat="kitty +kitten icat"
+alias mpvv="mpv --vo=tct --profile=sw-fast --no-terminal --vo-tct-width=$(tput cols) --vo-tct-height=$(tput lines)"
