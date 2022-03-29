@@ -240,8 +240,8 @@ function inject_shell_script() {
 #### INIT FUNCTIONS ####
 
 function init_bash {
-    inject_shell_script bash/bashrc .bashrc
     inject_shell_script bash/functions.sh .bashrc
+    inject_shell_script bash/bashrc .bashrc
     inject_shell_script bash/alias.sh .bashrc
     inject_shell_script bash/bash_profile .bash_profile
     curl -fLo "${SCRIPTPATH}/bash/git-prompt.sh" \

@@ -8,6 +8,10 @@
 if [ -z "$USERBASHRCSOURCED" ]; then
     USERBASHRCSOURCED="Y"
 
+    function command_exists () {
+	    builtin command -v "$1" >/dev/null 2>&1 || return 1;
+    }
+
     # Source global definitions
     if [ -f /etc/bashrc ]; then
         . /etc/bashrc
@@ -21,24 +25,27 @@ if [ -z "$USERBASHRCSOURCED" ]; then
     # Uncomment the following line if you don't like systemctl's auto-paging feature:
     # export SYSTEMD_PAGER=
 
-    function command_exists () {
-	    builtin command -v "$1" >/dev/null 2>&1 || return 1;
-    }
-
     # User specific aliases and functions
-    if [ -h ~/.bashrc ]; then
+    if [[ -L ~/.bashrc && -e ~/.bashrc ]]; then
         if command_exists realpath; then
             BASHRC_PATH=$(realpath ~/.bashrc)
         else
-            BASHRC_PATH=$(readlink ~/.bashrc)
+            BASHRC_PATH=$(readlink -f ~/.bashrc)
         fi
-        BASHRC_DIR=$(dirname "$BASHRC_PATH")
-
-        [ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
-        [ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
-
-        unset -v BASHRC_PATH
+    else
+        if command_exists realpath; then
+            BASHRC_PATH=$(realpath "${BASH_SOURCE[0]}")
+        else
+            BASHRC_PATH=$(readlink -f "${BASH_SOURCE[0]}")
+        fi
     fi
+
+    BASHRC_DIR=$(dirname "$BASHRC_PATH")
+
+    [ -f "${BASHRC_DIR}/functions.sh" ] && source "${BASHRC_DIR}/functions.sh"
+    [ -f "${BASHRC_DIR}/alias.sh" ] && source "${BASHRC_DIR}/alias.sh"
+
+    unset -v BASHRC_PATH
 
     if command_exists pathmunge; then
         # add binary PATH
