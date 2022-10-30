@@ -207,13 +207,13 @@ case "$TERM" in
 
 			if [[ $PS_USER = 'root' ]]; then
 				COLOR_PS1='\[$(fn_sgr_fg $_RED)\]${PS_USER}\[$(fn_sgr_end)\]\
-			               \[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
-						   \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
-			               $(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
+\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
+\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
 			else
 				COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
-							\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
-							$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
+\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
 			fi
 			COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW} '
 			COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
@@ -418,6 +418,6 @@ screen-record() {
 	# Record screen with ffmpeg
 	if command_exists xrandr; then
 		ffmpeg -video_size $(xrandr | grep "*+" | awk '{print $1; exit}') \
-			   -framerate 25 -f x11grab -i ${DISPLAY} output-$(date +%s).mp4
+			-framerate 25 -f x11grab -i ${DISPLAY} output-$(date +%s).mp4
 	fi
 }

@@ -1,6 +1,7 @@
 [user]
     name = Aldo Ridhoni
     email = aldoridhoni@gmail.com
+	signkey = B1B460B9E3029860
 [diff]
 [color]
     ui = auto
@@ -39,3 +40,5 @@
 	filemode = false
 [commit]
 	gpgsign = true
+[gpg]
+	program = gpg
