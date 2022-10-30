@@ -205,7 +205,7 @@ case "$TERM" in
 
 			update_info
 
-			if [[ $PS_USER = 'root' ]]; then
+			if [[ $USER = 'root' ]]; then
 				COLOR_PS1='\[$(fn_sgr_fg $_RED)\]${PS_USER}\[$(fn_sgr_end)\]\
 \[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
 \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
