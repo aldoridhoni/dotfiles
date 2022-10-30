@@ -37,3 +37,5 @@
 [core]
     excludesfile = ~/.gitignore_global
 	filemode = false
+[commit]
+	gpgsign = true

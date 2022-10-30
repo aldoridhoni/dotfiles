@@ -66,6 +66,9 @@ function prompt_command() {
 			   printf /${q:0:1}
 		   done
 		   printf "${q:1}")
+
+	# immediately save history
+	history -a
 }
 
 # https://stackoverflow.com/questions/5076127/
@@ -83,7 +86,7 @@ function settitle () {
 export PROMPT_COMMAND=prompt_command;
 
 case $EUID in
-	0) ARROW=$(printf '\u203c\ufe0e') ;; # ‼
+	0) ARROW=$(printf '\u203c') ;; # ‼
 	*) ARROW=$(printf '\u27a4') ;; # ➤
 esac
 
@@ -202,10 +205,17 @@ case "$TERM" in
 
 			update_info
 
-			COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
-\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
-$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
-			COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW}\[$(fn_sgr_end)\] '
+			if [[ $PS_USER = 'root' ]]; then
+				COLOR_PS1='\[$(fn_sgr_fg $_RED)\]${PS_USER}\[$(fn_sgr_end)\]\
+			               \[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
+						   \[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+			               $(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
+			else
+				COLOR_PS1='${PS_USER}\[$(fn_sgr_bold)\]${PS_HOSTNAME}\[$(fn_sgr_end)\]\
+							\[$(fn_sgr_fg $_GREEN)\]${PS1X}\[$(fn_sgr_fg $_RED)\]\
+							$(git_branch)$(nonzero_return)$(prompt_jobs)\[$(fn_sgr_end)\]${ARROW} '
+			fi
+			COLOR_PS2='\[$(fn_sgr_fg $_GREEN)\]${ARROW} '
 			COLOR_PS4='\[$(fn_sgr_fg $_GREEN)\]+\[$(fn_sgr_end)\] '
 			color_prompt
 		else
