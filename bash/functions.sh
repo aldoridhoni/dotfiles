@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+if command -v command_exists >/dev/null 2>&1; then
+	echo "..."
+else
+	function command_exists() {
+		if command -v $1 >/dev/null 2>&1; then
+			return 1
+		else
+			return 0
+		fi
+	}
+fi
+
 function nonzero_return() {
 	[[ $RETVAL -ne 0 ]] && printf " [$RETVAL]"
 	unset RETVAL
