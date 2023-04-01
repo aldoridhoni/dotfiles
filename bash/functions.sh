@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if command -v command_exists >/dev/null 2>&1; then
-	echo "..."
+	:
 else
 	function command_exists() {
 		if command -v $1 >/dev/null 2>&1; then
@@ -390,7 +390,7 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     }
 fi
 
-vterm_cmd() {
+function vterm_cmd() {
     if [ -n "$TMUX" ]; then
         # tell tmux to pass the escape sequences through
         # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
@@ -422,14 +422,78 @@ vterm_cmd() {
     fi
 }
 
-find-file() {
+function find-file() {
     vterm_cmd find-file "$(realpath "$@")"
 }
 
-screen-record() {
+function screen-record() {
 	# Record screen with ffmpeg
 	if command_exists xrandr; then
 		ffmpeg -video_size $(xrandr | grep "*+" | awk '{print $1; exit}') \
 			-framerate 25 -f x11grab -i ${DISPLAY} output-$(date +%s).mp4
 	fi
+}
+
+function repeat_char() {
+    local input="$1"
+    local count="$2"
+    printf -v string '%*s' "$count"
+    printf "${string// /$input}"
+    # printf '%s\n' "${string// /$input}"
+}
+
+function center() {
+        local COLS=$COLUMNS
+        local width=$(( $COLS - ${#1}))
+        # echo 'width '$width
+        local half=$(( $width / 2))
+        # echo 'half '$half
+        local xtimes=$(( half / 10))
+        local diff1=$(($half - $xtimes*10))
+        local diff2=$(($width - $half*2))
+        # echo 'times '$xtimes
+        # echo $diff1 $diff2
+        local RED="\e[31m"
+        local ENDCOLOR="\e[0m"
+        local fill=$(($diff1*2 + $diff2))
+        local fillgap=$(($fill - $fill/2*2))
+        # echo $fillgap
+
+        echo -en "${RED}"
+        repeat_char '▍' $(($fill/2))
+        repeat_char " ▋▍ ▋ ▎▏▋▏" ${xtimes}
+        echo -en "${ENDCOLOR}"
+        echo -n "$1"
+        echo -en "${RED}"
+        repeat_char " ▍▋ ▋ ▎▏▋▍" ${xtimes}
+        repeat_char '▍' $(($fill/2+$fillgap))
+        echo -en "${ENDCOLOR}"
+        echo
+}
+
+function lolbanner() {
+  figlet -c -w $COLUMNS -f smslant $@ | lolcat
+}
+
+function show_art() {
+    local len=${#HOSTNAME}
+    local text=$HOSTNAME
+    if (( len < 10 )); then
+        text=$LOGNAME" at "$HOSTNAME
+    fi
+
+    if [ -t 0 ] && shopt -q login_shell; then
+        if hash lolcat &> /dev/null; then
+            lolbanner "$text"
+        elif hash toilet &> /dev/null; then
+            toilet -f smslant -w $COLUMNS --metal -F crop "$text"
+        elif hash figlet &> /dev/null; then
+	        figlet -t -f smslant -c -w $COLUMNS "$text"
+        elif hash banner &> /dev/null; then
+            banner "Welcome to Bash!"
+        else
+	        # printf '%0.1s' "-"{1..$COLUMNS}
+	        center "..:: SELAMAT DATANG ::.."
+        fi
+    fi
 }

@@ -18,27 +18,7 @@ export PYTHONDONTWRITEBYTECODE=1
 
 
 # Show some art
-function show_art {
-    len=${#HOSTNAME}
-    if (( len < 5 )); then
-        HOSTNAME=$LOGNAME" at "$HOSTNAME
-    fi
-
-    if [ -t 0 ] && shopt -q login_shell; then
-        if hash toilet &> /dev/null; then
-            toilet -t -f smslant --metal "$HOSTNAME"
-        elif hash figlet &> /dev/null; then
-	        figlet -t -f smslant -c -w $COLUMNS "$HOSTNAME"
-        elif hash banner &> /dev/null; then
-            banner "0"
-        else
-	        # printf '%0.1s' "-"{1..$COLUMNS}
-	        echo "..::SELAMAT DATANG::.."
-        fi
-    fi
-}
-
 case $- in
-    *i*) echo "This shell is interactive" ; show_art ;;
+    *i*) center "▶ This shell is interactive ◀ "; show_art ;;
     *) : ;;
 esac
