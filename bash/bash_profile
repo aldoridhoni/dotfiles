@@ -18,7 +18,11 @@ export PYTHONDONTWRITEBYTECODE=1
 
 
 # Show some art
-text="GNU bash ${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}.${BASH_VERSINFO[2]} || $(lsb_release -sd)"
+text="GNU bash ${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}.${BASH_VERSINFO[2]}"
+if command_exists lsb_release; then
+    text="${text} || $(lsb_release -sd)"
+fi
+
 case $- in
     *i*) center " $text " ; show_art ;;
     *) : ;;
