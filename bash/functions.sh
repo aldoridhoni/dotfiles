@@ -410,16 +410,6 @@ function vterm_cmd() {
         printf '"%s" ' "$r"
         shift
     done
-    if [ -n "$TMUX" ]; then
-        # tell tmux to pass the escape sequences through
-        # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
-        printf "\007\e\\"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\007\e\\"
-    else
-        printf "\e\\"
-    fi
 }
 
 function find-file() {
@@ -454,6 +444,7 @@ function center() {
         # echo 'times '$xtimes
         # echo $diff1 $diff2
         local RED="\e[31m"
+        local INVERTED="\e[47m\e[30m"
         local ENDCOLOR="\e[0m"
         local fill=$(($diff1*2 + $diff2))
         local fillgap=$(($fill - $fill/2*2))
@@ -462,9 +453,9 @@ function center() {
         echo -en "${RED}"
         repeat_char '▍' $(($fill/2))
         repeat_char " ▋▍ ▋ ▎▏▋▏" ${xtimes}
-        echo -en "${ENDCOLOR}"
-        echo -n "$1"
-        echo -en "${RED}"
+        echo -en "${ENDCOLOR}${INVERTED}"
+        echo -en "$1"
+        echo -en "${ENDCOLOR}${RED}"
         repeat_char " ▍▋ ▋ ▎▏▋▍" ${xtimes}
         repeat_char '▍' $(($fill/2+$fillgap))
         echo -en "${ENDCOLOR}"
@@ -476,6 +467,8 @@ function lolbanner() {
 }
 
 function show_art() {
+    [ -n $TMUX ] && return
+
     local len=${#HOSTNAME}
     local text=$HOSTNAME
     if (( len < 10 )); then

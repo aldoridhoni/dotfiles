@@ -18,7 +18,8 @@ export PYTHONDONTWRITEBYTECODE=1
 
 
 # Show some art
+text="GNU bash ${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}.${BASH_VERSINFO[2]} || $(lsb_release -sd)"
 case $- in
-    *i*) center "▶ This shell is interactive ◀ "; show_art ;;
+    *i*) center " $text " ; show_art ;;
     *) : ;;
 esac
