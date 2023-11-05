@@ -207,19 +207,19 @@ function action() {
 
 function check_dest() {
     # $1 : filename path
-    if [[ -e $1 ]]; then
+    if [[ -e "$1" ]]; then
         if [[ $BACKUP == true ]]; then
             mv -n "$1"{,~}
-        elif [[ -L $1 ]]; then
+        elif [[ -L "$1" ]]; then
             rm "$1"
         fi
-    elif [[ -L $1 ]]; then
+    elif [[ -L "$1" ]]; then
         # broken link file
         rm "$1"
     fi
 
-    if [[ $1 == */ ]]; then
-        mkdir -p $1
+    if [[ "$1" == */ ]]; then
+        mkdir -p "$1"
     fi
 }
 

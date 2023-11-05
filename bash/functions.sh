@@ -147,9 +147,9 @@ fi
 
 # need to shrink \u@\h at low col number.
 function update_info() {
-	[[ -z $USER ]] && USER=$(id -nu)
+	[[ -z "$USER" ]] && USER=$(id -nu)
 
-	[[ -z $HOSTNAME ]] && HOSTNAME=$(hostname -s)
+	[[ -z "$HOSTNAME" ]] && HOSTNAME=$(hostname -s)
 
 
 	if [[ -n $COLUMNS && 72 -gt $COLUMNS ]]; then
@@ -467,7 +467,7 @@ function lolbanner() {
 }
 
 function show_art() {
-    [ -n $TMUX ] && return
+    [ -n "$TMUX" ] && return
 
     local len=${#HOSTNAME}
     local text=$HOSTNAME

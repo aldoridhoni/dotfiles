@@ -49,9 +49,9 @@ if [ -z "$USERBASHRCSOURCED" ]; then
 
     if command_exists pathmunge; then
         # add binary PATH
-        [ -d $HOME/.bin ] && pathmunge $HOME/.bin
-        [ -d $HOME/bin ] && pathmunge $HOME/bin
-        [ -d $HOME/.local/bin ] && pathmunge $HOME/.local/bin
+        [ -d "$HOME/.bin" ] && pathmunge "$HOME/.bin"
+        [ -d "$HOME/bin" ] && pathmunge "$HOME/bin"
+        [ -d "$HOME/.local/bin" ] && pathmunge "$HOME/.local/bin"
 
         # flatpak bin
         if [ -d /var/lib/flatpak/exports/bin ]; then
@@ -59,15 +59,15 @@ if [ -z "$USERBASHRCSOURCED" ]; then
         fi
 
         # Rust bin
-        if [ -d $HOME/.cargo/bin ]; then
-            pathmunge $HOME/.cargo/bin
+        if [ -d "$HOME/.cargo/bin" ]; then
+            pathmunge "$HOME/.cargo/bin"
         fi
 
             # Golang Path
         if [ -d ~/.go ]; then
             if [ -z $GOPATH ]; then
                 export GOPATH="$HOME/.go"
-                pathmunge $GOPATH/bin
+                pathmunge "$GOPATH/bin"
             fi
         fi
     fi
